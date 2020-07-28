@@ -45,12 +45,6 @@
       <pose>-0.530772 0 0 0 0 -1.57</pose>
     </include>
 
-    <!-- Shelf -->
-    <include>
-      <uri>model://shelf</uri>
-      <pose>-0.359608 0 0.38 0 0 -1.57</pose>
-    </include>
-
     <include>
       <uri>model://mustard_bottle</uri>
       <pose>-0.3066 0.1703 0.51 0 0 1.0143</pose>
