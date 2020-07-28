@@ -46,5 +46,8 @@ To run the sandbox locally using [Docker](https://www.docker.com), go through th
 1. Proceed as previously described.
 1. Once done, from the container shell press **CTRL+D**.
 
+### 🙏 Acknowledgements
+Special thanks to [xEnVrE](https://github.com/xEnVrE) for his seminal work on simulating visuomanipulation tasks in Gazebo.
+
 [1]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
 [2]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
