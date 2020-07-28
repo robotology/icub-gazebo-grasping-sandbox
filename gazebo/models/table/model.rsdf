@@ -5,7 +5,7 @@
 # SI units (length in meters)
 
 # Geometry
-leg_h   = 0.35
+leg_h   = 0.45
 leg_z0  = leg_h*0.5
 surf_h  = 0.03
 surf_z0 = leg_h + surf_h*0.5
