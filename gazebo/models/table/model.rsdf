@@ -1,0 +1,149 @@
+<?xml version="1.0" ?>
+<%
+# A wooden table
+# Consists of four legs and one surface on top
+# SI units (length in meters)
+
+# Geometry
+leg_h   = 0.35
+leg_z0  = leg_h*0.5
+surf_h  = 0.03
+surf_z0 = leg_h + surf_h*0.5
+
+# Friction coefficients
+mu = 0.1
+mu2 = 0.1
+%>
+<sdf version="1.7">
+  <model name="table">
+    <static>true</static>
+    <link name="table_root_link">
+      <collision name="table_surface_collision">
+	<pose>0 0 <%= surf_z0 %> 0 0 0</pose>
+	<geometry>
+          <box>
+            <size>1.5 0.8 <%= surf_h %></size>
+          </box>
+	</geometry>
+	<surface>
+          <friction>
+            <ode>
+              <mu><%= mu %></mu>
+              <mu2><%= mu2 %></mu2>
+            </ode>
+          </friction>
+	</surface>
+      </collision>
+      <visual name="table_surface_visual">
+	<pose>0 0 <%= surf_z0 %> 0 0 0</pose>
+	<geometry>
+          <box>
+            <size>1.5 0.8 <%= surf_h %></size>
+          </box>
+	</geometry>
+	<material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Wood</name>
+          </script>
+	</material>
+      </visual>
+      <collision name="front_left_leg">
+        <pose>0.68 0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="front_left_leg">
+        <pose>0.68 0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="front_right_leg">
+        <pose>0.68 -0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="front_right_leg">
+        <pose>0.68 -0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="back_right_leg">
+        <pose>-0.68 -0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="back_right_leg">
+        <pose>-0.68 -0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="back_left_leg">
+        <pose>-0.68 0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="back_left_leg">
+        <pose>-0.68 0.38 <%= leg_z0 %> 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.02</radius>
+            <length><%= leg_h %></length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

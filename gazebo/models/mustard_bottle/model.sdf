@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+
+<sdf version="1.7">
+
+  <model name='mustard_bottle'>
+
+    <link name='mustard_bottle_link'>
+
+      <inertial>
+        <!-- CoM evaluated using Meshlab assuming a homogeneous body-->
+        <!-- expressed w.r.t. the origin of the mesh -->
+        <pose>-0.015054 -0.023109 0.075042 0 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <!-- Obtained from Meshlab -->
+          <ixx>0.00024306134790849675</ixx>
+          <ixy>1.2579345702614378e-05</ixy>
+          <ixz>-8.24954705882353e-07</ixz>
+          <iyy>0.00026750229779411763</iyy>
+          <iyz>-1.1690506209150325e-06</iyz>
+          <izz>7.015540428104576e-05</izz>
+        </inertia>
+      </inertial>
+
+      <collision name='mustard_bottle_collision'>
+        <max_contacts>1</max_contacts>
+        <geometry>
+          <mesh>
+            <uri>model://mustard_bottle/meshes/obj_000005_collision.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name='mustard_bottle_visual'>>
+        <geometry>
+          <mesh>
+            <uri>model://mustard_bottle/meshes/obj_000005.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+    </link>
+
+  </model>
+
+</sdf>

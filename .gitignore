@@ -1,0 +1,11 @@
+*~
+/build*/
+*kdev*
+*.orig
+*.swp
+core*
+.DS_Store
+.Trashes
+.vs/
+CMakeSettings.json
+*.txt.user
