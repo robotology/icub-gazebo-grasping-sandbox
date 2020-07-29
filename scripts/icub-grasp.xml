@@ -54,7 +54,7 @@
 
     <module>
         <name>yarpview</name>
-        <parameters>--name /view/left --compact --p 10 --x 600 --y 20</parameters>
+        <parameters>--name /view/left --compact --p 10 --x 20 --y 20</parameters>
         <node>localhost</node>
     </module>
 

@@ -10,10 +10,10 @@ yarp wait /icubSim/left_arm/state:o
 yarp wait /icubSim/right_arm/state:o
 
 yarpmanager-console --application icub-grasp.xml --run --connect --exit --silent
+sleep 10
+yarpmanager-console --application icub-grasp.xml --kill --exit --silent
 
-sleep 5
-declare -a modules=("yarpview" "iKinGazeCtrl" "iKinCartesianSolver" "yarprobotinterface" "gzclient" "gzserver" "yarpserver")
+declare -a modules=("gzclient" "gzserver" "yarpserver")
 for module in ${modules[@]}; do
   killall ${module}
-  sleep 3
 done
