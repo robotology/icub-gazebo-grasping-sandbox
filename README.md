@@ -60,5 +60,8 @@ To run the sandbox locally using [Docker](https://www.docker.com), go through th
 ### 🙏 Acknowledgements
 Special thanks go to [xEnVrE](https://github.com/xEnVrE) for his help on simulating visuomanipulation tasks in Gazebo.
 
+### 🆕 Contributing
+Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
+
 [1]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
 [2]: https://gitpod.io/#https://github.com/icub-tech-iit/icub-gazebo-grasping-sandbox
