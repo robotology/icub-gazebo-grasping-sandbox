@@ -6,7 +6,7 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
 
-1. Click on the following badge to start off the sandbox:
+1. To get started with the sandbox, click on the following badge:
 
     [![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][2]
 
@@ -17,7 +17,7 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
     $ cmake ../
     $ make install
     ```
-1. Open the browser at the port `6080` from within Gitpod.
+1. From within Gitpod, open up the browser at the port `6080`.
 1. Open a terminal and run the grasping experiment:
    ```sh
    $ icub-grasp.sh
@@ -43,7 +43,7 @@ To run the sandbox locally using [Docker](https://www.docker.com), go through th
     $ start-vnc-session-local.sh
     ```
 1. Open up the browser and connect to **`localhost:6080`**.
-1. Clone and build/install the project:
+1. Clone and install the project:
     ```sh
     $ git clone https://github.com/icub-tech-iit/icub-gazebo-grasping-sandbox.git /workspace/icub-gazebo-grasping-sandbox
     $ cd /workspace/icub-gazebo-grasping-sandbox 
