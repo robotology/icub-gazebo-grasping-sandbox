@@ -1,0 +1,67 @@
+<application>
+    <name>iCub Grasp</name>
+
+    <dependencies>
+    </dependencies>
+
+    <module>
+        <name>yarprobotinterface</name>
+        <parameters>--context gazeboCartesianControl --config no_legs.xml</parameters>
+        <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
+            <port timeout="20">/icubSim/left_arm/state:o</port>
+            <port timeout="20">/icubSim/right_arm/state:o</port>
+        </dependencies>
+        <ensure>
+            <wait when="stop">5</wait>
+        </ensure>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>iKinCartesianSolver</name>
+        <parameters>--context gazeboCartesianControl --part right_arm</parameters>
+        <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
+            <port timeout="20">/icubSim/right_arm/state:o</port>
+        </dependencies>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>iKinCartesianSolver</name>
+        <parameters>--context gazeboCartesianControl --part left_arm</parameters>
+        <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
+            <port timeout="20">/icubSim/left_arm/state:o</port>
+        </dependencies>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>iKinGazeCtrl</name>
+        <parameters>--context gazeboCartesianControl --from iKinGazeCtrl.ini</parameters>
+        <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
+            <port timeout="20">/icubSim/head/state:o</port>
+            <port timeout="20">/icubSim/inertial</port>
+        </dependencies>
+        <ensure>
+            <wait when="stop">5</wait>
+        </ensure>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /view/left --compact --p 10 --x 600 --y 20</parameters>
+        <node>localhost</node>
+    </module>
+
+    <connection>
+        <from>/icubSim/cam/left/rgbImage:o</from>
+        <to>/view/left</to>
+        <protocol>tcp</protocol>
+    </connection>
+
+</application>

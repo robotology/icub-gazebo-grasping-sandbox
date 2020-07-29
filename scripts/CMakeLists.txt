@@ -5,16 +5,8 @@
 #                                                                              #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.5)
-project(icub-gazebo-grasping-sandbox VERSION 1.0.0)
+# Install the application
+yarp_install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/icub-grasp.xml DESTINATION ${ICUBCONTRIB_APPLICATIONS_INSTALL_DIR})
 
-find_package(YCM REQUIRED)
-find_package(ICUBcontrib REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${ICUBCONTRIB_MODULE_PATH})
-include(ICUBcontribOptions)
-include(ICUBcontribHelpers)
-
-icubcontrib_set_default_prefix()
-add_subdirectory(gazebo)
-add_subdirectory(scripts)
-include(AddUninstallTarget)
+# Install startup script
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/icub-grasp.sh DESTINATION bin)
