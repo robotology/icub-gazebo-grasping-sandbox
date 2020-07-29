@@ -23,6 +23,10 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
    $ icub-grasp.sh
    ```
 
+<p align="center">
+    <img src="./assets/showcase.png">
+</p>
+
 ## 🐳 Instructions to run the sandbox locally
 To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
 1. Pull the docker image:
