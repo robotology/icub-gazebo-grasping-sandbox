@@ -1,7 +1,7 @@
 Scriptable models
 =================
 
-All models located in `models` also contain a scriptable SDF with extension `.rsdf`. This allows deciding the mass of the object and thus generating the inertia matrix accordingly.
+All models also contain a scriptable SDF with extension `.rsdf`. This allows deciding the mass of the object and thus generating the inertia matrix accordingly.
 
 To generate the `sdf` from the `rsdf`, run `erb model.rsdf > model.sdf`.
 
