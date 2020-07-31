@@ -49,10 +49,9 @@
       <uri>model://mustard_bottle</uri>
       <pose>-0.3066 0.1703 0.51 0 0 1.0143</pose>
 
-      <!-- Uncomment if you need the pose of the object as a tf transform -->
-      <!-- <plugin name="pose_publisher" filename='libgazebo_yarp_modelposepublisher.so'> -->
-      <!--   <period>0.03333333333333333</period> -->
-      <!-- </plugin> -->
+      <plugin name="pose_publisher" filename='libgazebo_yarp_modelposepublisher.so'>
+         <period>0.02</period>
+      </plugin>
     </include>
 
     <!-- iCub  -->
