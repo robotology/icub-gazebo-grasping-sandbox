@@ -91,8 +91,7 @@ class Grasper : public RFModule, public grasp_IDL {
         IControlMode* imod;
         hand.view(imod);
         vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
-        vector<int> modes(fingers.size(), VOCAB_CM_POSITION);
-        imod->setControlModes(fingers.size(), fingers.data(), modes.data());
+        imod->setControlModes(fingers.size(), fingers.data(), vector<int>(fingers.size(), VOCAB_CM_POSITION).data());
 
         // target pose that allows grasing the object
         Vector x({-.24, .18, -.03});
@@ -120,7 +119,7 @@ class Grasper : public RFModule, public grasp_IDL {
         hand.view(ilim);
         double pinkie_min, pinkie_max;
         ilim->getLimits(15, &pinkie_min, &pinkie_max);
-        ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::max()).data());
+        ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
         ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>({60., 60., 60., 60., 60., 60., 60., 60., 200.}).data());
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., pinkie_max}).data());
         Time::delay(5.);
