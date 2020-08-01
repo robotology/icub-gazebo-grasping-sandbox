@@ -94,6 +94,7 @@ class Grasper : public RFModule, public grasp_IDL {
         vector<int> modes(joints.size(), VOCAB_CM_POSITION);
         imod->setControlModes(joints.size(), joints.data(), modes.data());
 
+        // target pose that allows grasing the object
         Vector x({-.25, .18, -.03});
         Vector o({-.14, -.79, .59, 3.07});
 
