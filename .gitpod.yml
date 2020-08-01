@@ -1,4 +1,4 @@
-image: pattacini/vvv-school:latest
+image: pattacini/icub-gazebo-grasping-sandbox:latest
 ports:
 - port: 6080
   onOpen: notify
