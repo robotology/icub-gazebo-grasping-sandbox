@@ -90,9 +90,9 @@ class Grasper : public RFModule, public grasp_IDL {
         // enable position control of the fingers
         IControlMode* imod;
         hand.view(imod);
-        vector<int> joints = {7, 8, 9, 10, 11, 12, 13, 14, 15};
-        vector<int> modes(joints.size(), VOCAB_CM_POSITION);
-        imod->setControlModes(joints.size(), joints.data(), modes.data());
+        vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
+        vector<int> modes(fingers.size(), VOCAB_CM_POSITION);
+        imod->setControlModes(fingers.size(), fingers.data(), modes.data());
 
         // target pose that allows grasing the object
         Vector x({-.25, .18, -.03});
@@ -116,9 +116,9 @@ class Grasper : public RFModule, public grasp_IDL {
         // put the hand in the pre-grasp configuration
         IPositionControl* ihand;
         hand.view(ihand);
-        ihand->setRefAccelerations(joints.size(), joints.data(), vector<double>(joints.size(), numeric_limits<double>::max()).data());
-        ihand->setRefSpeeds(joints.size(), joints.data(), vector<double>(joints.size(), 60.).data());
-        ihand->positionMove(joints.size(), joints.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., 0.}).data());
+        ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::max()).data());
+        ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>(fingers.size(), 60.).data());
+        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., 0.}).data());
         Time::delay(3.);
 
         // reach for the object
@@ -126,7 +126,7 @@ class Grasper : public RFModule, public grasp_IDL {
         iarm->waitMotionDone(.1, 3.);
 
         // close fingers
-        ihand->positionMove(joints.size(), joints.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., 0.}).data());
+        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., 0.}).data());
 
         // give time to adjust the contacts
         Time::delay(5.);
