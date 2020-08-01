@@ -95,7 +95,7 @@ class Grasper : public RFModule, public grasp_IDL {
         imod->setControlModes(fingers.size(), fingers.data(), modes.data());
 
         // target pose that allows grasing the object
-        Vector x({-.25, .18, -.03});
+        Vector x({-.24, .18, -.03});
         Vector o({-.14, -.79, .59, 3.07});
 
         // keep gazing at the object
@@ -110,23 +110,27 @@ class Grasper : public RFModule, public grasp_IDL {
         Vector dof({1, 0, 1, 1, 1, 1, 1, 1, 1, 1});
         iarm->setDOF(dof, dof);
         iarm->setTrajTime(.6);
-        iarm->goToPoseSync(x + Vector({.05, 0., .03}), o);
+        iarm->goToPoseSync(x + Vector({.07, 0., .03}), o);
         iarm->waitMotionDone(.1, 3.);
 
         // put the hand in the pre-grasp configuration
         IPositionControl* ihand;
+        IControlLimits* ilim;
         hand.view(ihand);
+        hand.view(ilim);
+        double pinkie_min, pinkie_max;
+        ilim->getLimits(15, &pinkie_min, &pinkie_max);
         ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::max()).data());
-        ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>(fingers.size(), 60.).data());
-        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., 0.}).data());
-        Time::delay(3.);
+        ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>({60., 60., 60., 60., 60., 60., 60., 60., 200.}).data());
+        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., pinkie_max}).data());
+        Time::delay(5.);
 
         // reach for the object
         iarm->goToPoseSync(x, o);
         iarm->waitMotionDone(.1, 3.);
 
         // close fingers
-        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., 0.}).data());
+        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}).data());
 
         // give time to adjust the contacts
         Time::delay(5.);
