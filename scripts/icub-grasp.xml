@@ -59,6 +59,15 @@
     </module>
 
     <module>
+        <name>find-superquadric</name>
+        <parameters>--remove-outliers "(0.01 10)" --random-sample 0.2</parameters>
+        <dependencies>
+            <port timeout="20">/view/left</port>
+        </dependencies>
+        <node>localhost</node>
+    </module>
+
+    <module>
         <name>icub-gazebo-grasping-sandbox</name>
         <parameters></parameters>
         <dependencies>
@@ -72,6 +81,24 @@
     <connection>
         <from>/icubSim/cam/left/rgbImage:o</from>
         <to>/view/left</to>
+        <protocol>unix_stream</protocol>
+    </connection>
+
+    <connection>
+        <from>/icubSim/cam/left/rgbImage:o</from>
+        <to>/icub-grasp/rgb:i</to>
+        <protocol>unix_stream</protocol>
+    </connection>
+
+    <connection>
+        <from>/icubSim/cam/left/depthImage:o</from>
+        <to>/icub-grasp/depth:i</to>
+        <protocol>unix_stream</protocol>
+    </connection>
+
+    <connection>
+        <from>/icub-grasp/sq:rpc</from>
+        <to>/find-superquadric/points:rpc</to>
         <protocol>tcp</protocol>
     </connection>
 

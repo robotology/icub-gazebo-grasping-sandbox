@@ -10,7 +10,8 @@ RUN apt update
 # Install essentials
 RUN apt install -y apt-utils software-properties-common apt-transport-https sudo \
     psmisc lsb-release tmux nano wget curl telnet gnupg build-essential gdb git gitk \
-    cmake cmake-curses-gui libedit-dev libxml2-dev autoconf locales gdebi terminator meld
+    cmake cmake-curses-gui libedit-dev libxml2-dev autoconf locales gdebi terminator meld \
+    meshlab
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
