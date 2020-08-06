@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <random>
 #include <functional>
+#include <limits>
 #include <yarp/sig/PointCloud.h>
 
 using namespace std;
@@ -23,10 +24,10 @@ using namespace yarp::sig;
 class Segmentation {
 public:
     /**************************************************************************/
-    static bool RANSAC(shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_scene,
-                       shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table,
-                       shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object,
-                       const int num_points = 100) {
+    static double RANSAC(shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_scene,
+                         shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table,
+                         shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object,
+                         const int num_points = 100) {
 
         // generate random indexes
         random_device rnd_device;
@@ -63,11 +64,11 @@ public:
                         pc_object->push_back(p);
                     }
                 }
-                return true;
+                return h;
             }
         }
 
-        return false;
+        return numeric_limits<double>::quiet_NaN();
     }
 };
 

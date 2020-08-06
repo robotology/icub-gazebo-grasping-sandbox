@@ -59,6 +59,9 @@ class Grasper : public RFModule, public rpc_IDL {
     shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table;
     shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object;
 
+    Matrix Teye;
+    double view_angle{50.};
+    double table_height{numeric_limits<double>::quiet_NaN()};
     Bottle sqParams;
 
     /**************************************************************************/
@@ -188,12 +191,17 @@ class Grasper : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool go() override {
-        home();
-        Time::delay(2.);
-        segment();
-        fit();
-        grasp();
-        return true;
+        if (home()) {
+            Time::delay(2.);
+            if (segment()) {
+                if (fit()) {
+                    if (grasp()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**************************************************************************/
@@ -227,8 +235,8 @@ class Grasper : public RFModule, public rpc_IDL {
         gaze.view(igaze);
         Vector x, o;
         igaze->getLeftEyePose(x, o);
-        Matrix T = axis2dcm(o);
-        T.setSubcol(x, 0, 3);
+        Teye = axis2dcm(o);
+        Teye.setSubcol(x, 0, 3);
 
         // get image data
         ImageOf<PixelRgb>* rgbImage = rgbPort.read();
@@ -250,7 +258,7 @@ class Grasper : public RFModule, public rpc_IDL {
 
         // aggregate image data in the point cloud of the whole scene
         pc_scene = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
-        auto fov_h = (w / 2.) / tan((50. / 2.) * (M_PI / 180.));
+        auto fov_h = (w / 2.) / tan((view_angle / 2.) * (M_PI / 180.));
         x = Vector({0., 0., 0., 1.});
         for (int v = 0; v < h; v++) {
             for (int u = 0; u < w; u++) {
@@ -261,7 +269,7 @@ class Grasper : public RFModule, public rpc_IDL {
                     x[0] = depth * (u - .5 * (w - 1)) / fov_h;
                     x[1] = depth * (v - .5 * (h - 1)) / fov_h;
                     x[2] = depth;
-                    x = T * x;
+                    x = Teye * x;
                 
                     pc_scene->push_back(DataXYZRGBA());
                     auto& p = (*pc_scene)(pc_scene->size() - 1);
@@ -281,7 +289,8 @@ class Grasper : public RFModule, public rpc_IDL {
         // segment out the table and the object
         pc_table = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
         pc_object = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
-        if (Segmentation::RANSAC(pc_scene, pc_table, pc_object)) {
+        table_height = Segmentation::RANSAC(pc_scene, pc_table, pc_object);
+        if (!isnan(table_height)) {
             savePCL("/workspace/pc_table.off", pc_table);
             savePCL("/workspace/pc_object.off", pc_object);
             return true;
