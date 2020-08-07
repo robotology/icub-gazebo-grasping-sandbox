@@ -163,9 +163,9 @@ class Grasper : public RFModule, public rpc_IDL {
         // set up velocity of arms' movements
         {
             vector<PolyDriver*> polys({&arm_r, &arm_l});
-            for (auto arm:polys) {
+            for (auto poly:polys) {
                 ICartesianControl* iarm;
-                arm->view(iarm);
+                poly->view(iarm);
                 iarm->setTrajTime(.6);
             }
         }
@@ -173,9 +173,9 @@ class Grasper : public RFModule, public rpc_IDL {
         // enable position control of the fingers
         {
             vector<PolyDriver*> polys({&hand_r, &hand_l});
-            for (auto hand:polys) {
+            for (auto poly:polys) {
                 IControlMode* imod;
-                hand->view(imod);
+                poly->view(imod);
                 imod->setControlModes(fingers.size(), fingers.data(), vector<int>(fingers.size(), VOCAB_CM_POSITION).data());
             }
         }
@@ -216,8 +216,8 @@ class Grasper : public RFModule, public rpc_IDL {
             Vector x({-.25, .3, .1});
             vector<PolyDriver*> polys({&arm_r, &arm_l});
             ICartesianControl* iarm;
-            for (auto arm:polys) {                
-                arm->view(iarm);
+            for (auto poly:polys) {                
+                poly->view(iarm);
                 iarm->goToPositionSync(x);                
                 x[1] = -x[1];
             }
@@ -335,8 +335,7 @@ class Grasper : public RFModule, public rpc_IDL {
         Vector dof({1, 0, 1, 1, 1, 1, 1, 1, 1, 1});
         iarm->setDOF(dof, dof);
         iarm->goToPoseSync(x + Vector({.07, 0., .03}), o);
-        iarm->waitMotionDone(.1, 3.);
-
+        
         // put the hand in the pre-grasp configuration
         IPositionControl* ihand;
         IControlLimits* ilim;
@@ -349,9 +348,21 @@ class Grasper : public RFModule, public rpc_IDL {
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., pinkie_max}).data());
         Time::delay(5.);
 
+        // make sure that we've reached for the pre-grasp pose
+        iarm->waitMotionDone(.1, 3.);
+        
+        // increase reaching accuracy
+        Bottle options;
+        Bottle& opt1 = options.addList();
+        opt1.addString("tol"); opt1.addDouble(.001);
+        Bottle& opt2 = options.addList();
+        opt2.addString("constr_tol"); opt2.addDouble(.000001);
+        iarm->tweakSet(options);
+        iarm->setInTargetTol(.001);
+
         // reach for the object
         iarm->goToPoseSync(x, o);
-        iarm->waitMotionDone(.1, 3.);
+        iarm->waitMotionDone(.1, 5.);
 
         // close fingers
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}).data());
@@ -388,6 +399,18 @@ class Grasper : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool close() override {
+        // restore default contexts
+        IGazeControl* igaze;
+        gaze.view(igaze);
+        igaze->restoreContext(0);
+
+        vector<PolyDriver*> polys({&arm_r, &arm_l});
+        for (auto poly:polys) {
+            ICartesianControl* iarm;
+            poly->view(iarm);
+            iarm->restoreContext(0);
+        }
+
         rpcPort.close();
         sqPort.close();
         depthPort.close();
