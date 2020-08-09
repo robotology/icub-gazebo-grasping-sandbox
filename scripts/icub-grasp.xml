@@ -60,7 +60,7 @@
 
     <module>
         <name>find-superquadric</name>
-        <parameters>--remove-outliers "(0.01 10)" --random-sample 0.2</parameters>
+        <parameters>--remove-outliers "(0.01 10)" --random-sample 0.2 --disable-viewer</parameters>
         <dependencies>
             <port timeout="20">/view/left</port>
         </dependencies>

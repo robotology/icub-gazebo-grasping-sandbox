@@ -17,25 +17,24 @@
 #include <limits>
 #include <yarp/sig/PointCloud.h>
 
-using namespace std;
-using namespace yarp::sig;
+namespace segmentation {
 
 /******************************************************************************/
 class Segmentation {
 public:
     /**************************************************************************/
-    static double RANSAC(shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_scene,
-                         shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table,
-                         shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object,
+    static double RANSAC(std::shared_ptr<yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>> pc_scene,
+                         std::shared_ptr<yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>> pc_table,
+                         std::shared_ptr<yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>> pc_object,
                          const int num_points = 100) {
 
         // generate random indexes
-        random_device rnd_device;
-        mt19937 mersenne_engine(rnd_device());
-        uniform_int_distribution<int> dist(0, pc_scene->size() - 1);
-        auto gen = bind(dist, mersenne_engine);
-        vector<int> remap(num_points);
-        generate(begin(remap), end(remap), gen);
+        std::random_device rnd_device;
+        std::mt19937 mersenne_engine(rnd_device());
+        std::uniform_int_distribution<int> dist(0, pc_scene->size() - 1);
+        auto gen = std::bind(dist, mersenne_engine);
+        std::vector<int> remap(num_points);
+        std::generate(std::begin(remap), std::end(remap), gen);
 
         // implement RANSAC
         auto threshold_1 = .01F; // [cm]
@@ -45,7 +44,7 @@ public:
             size_t n = 0;
             for (size_t j = 0; j < remap.size(); j++) {
                 auto& pj = (*pc_scene)(remap[j]);
-                if (fabs(pj.z - pi.z) < threshold_1) {
+                if (std::fabs(pj.z - pi.z) < threshold_1) {
                     h += pj.z;
                     n++;
                 }
@@ -68,8 +67,10 @@ public:
             }
         }
 
-        return numeric_limits<double>::quiet_NaN();
+        return std::numeric_limits<double>::quiet_NaN();
     }
 };
+
+}
 
 #endif
