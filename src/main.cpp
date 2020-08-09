@@ -36,12 +36,15 @@
 
 #include "rpc_IDL.h"
 #include "segmentation.h"
+#include "viewer.h"
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
+using namespace segmentation;
+using namespace viewer;
 
 /******************************************************************************/
 class Grasper : public RFModule, public rpc_IDL {
@@ -63,7 +66,9 @@ class Grasper : public RFModule, public rpc_IDL {
     double view_angle{50.};
     double table_height{numeric_limits<double>::quiet_NaN()};
     Bottle sqParams;
-
+    
+    unique_ptr<Viewer> viewer;
+    
     /**************************************************************************/
     bool attach(RpcServer& source) override {
         return this->yarp().attachAsServer(source);
@@ -76,7 +81,7 @@ class Grasper : public RFModule, public rpc_IDL {
             fout << "COFF" << endl;
             fout << pc->size() << " 0 0" << endl;
             for (size_t i = 0; i < pc->size(); i++) {
-                auto& p = (*pc)(i);
+                const auto& p = (*pc)(i);
                 fout << p.x << " " << p.y << " " << p.z << " "
                      << (int)p.r << " " << (int)p.g << " "
                      << (int)p.b << " " << (int)p.a << endl;
@@ -90,7 +95,7 @@ class Grasper : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool helperArmDriverOpener(PolyDriver& arm, const Property& options) {
-        auto t0 = Time::now();
+        const auto t0 = Time::now();
         while (Time::now() - t0 < 10.) {
             // this might fail if controller is not connected to solver yet
             if (arm.open(const_cast<Property&>(options))) {
@@ -186,6 +191,9 @@ class Grasper : public RFModule, public rpc_IDL {
         rpcPort.open("/"+name+"/rpc");
         attach(rpcPort);
 
+        viewer = unique_ptr<Viewer>(new Viewer(10, 370, 350, 350));
+        viewer->start();
+
         return true;
     }
 
@@ -233,10 +241,10 @@ class Grasper : public RFModule, public rpc_IDL {
         // get camera extrinsic matrix
         IGazeControl* igaze;
         gaze.view(igaze);
-        Vector x, o;
-        igaze->getLeftEyePose(x, o);
-        Teye = axis2dcm(o);
-        Teye.setSubcol(x, 0, 3);
+        Vector cam_x, cam_o;
+        igaze->getLeftEyePose(cam_x, cam_o);
+        Teye = axis2dcm(cam_o);
+        Teye.setSubcol(cam_x, 0, 3);
 
         // get image data
         ImageOf<PixelRgb>* rgbImage = rgbPort.read();
@@ -253,17 +261,17 @@ class Grasper : public RFModule, public rpc_IDL {
             return false;
         }
 
-        auto w = rgbImage->width();
-        auto h = rgbImage->height();
+        const auto w = rgbImage->width();
+        const auto h = rgbImage->height();
 
         // aggregate image data in the point cloud of the whole scene
         pc_scene = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
-        auto fov_h = (w / 2.) / tan((view_angle / 2.) * (M_PI / 180.));
-        x = Vector({0., 0., 0., 1.});
+        const auto fov_h = (w / 2.) / tan((view_angle / 2.) * (M_PI / 180.));
+        Vector x({0., 0., 0., 1.});
         for (int v = 0; v < h; v++) {
             for (int u = 0; u < w; u++) {
-                auto rgb = (*rgbImage)(u, v);
-                auto depth = (*depthImage)(u, v);
+                const auto rgb = (*rgbImage)(u, v);
+                const auto depth = (*depthImage)(u, v);
                 
                 if (depth > 0.F) {
                     x[0] = depth * (u - .5 * (w - 1)) / fov_h;
@@ -290,22 +298,31 @@ class Grasper : public RFModule, public rpc_IDL {
         pc_table = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
         pc_object = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
         table_height = Segmentation::RANSAC(pc_scene, pc_table, pc_object);
-        if (!isnan(table_height)) {
-            savePCL("/workspace/pc_table.off", pc_table);
-            savePCL("/workspace/pc_object.off", pc_object);
-            return true;
-        } else {
+        if (isnan(table_height)) {
             yError() << "Segmentation failed!";
             return false;
         }
+
+        savePCL("/workspace/pc_table.off", pc_table);
+        savePCL("/workspace/pc_object.off", pc_object);
+
+        // update viewer
+        Vector cam_foc;
+        igaze->get3DPointOnPlane(0, {w/2., h/2.}, {0., 0., 1., -table_height}, cam_foc);
+        viewer->addCamera({cam_x[0], cam_x[1], cam_x[2]}, {cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.}, view_angle);
+        viewer->addTable({cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.});
+        viewer->addObject(pc_object);
+
+        return true;
     }
 
     /**************************************************************************/
     bool fit() override {
         if (sqPort.getOutputCount() > 0) {
             // offload object fitting to the external solver
-            auto ret = sqPort.write(*pc_object, sqParams);
+            const auto ret = sqPort.write(*pc_object, sqParams);
             if (ret) {
+                viewer->addSuperquadric(sqParams);
                 return true;
             } else {
                 yError() << "Unable to fit the object!";
@@ -390,6 +407,8 @@ class Grasper : public RFModule, public rpc_IDL {
     }
 
     bool interruptModule() override {
+        viewer->stop();
+
         // interrupt blocking read
         sqPort.interrupt();
         depthPort.interrupt();
