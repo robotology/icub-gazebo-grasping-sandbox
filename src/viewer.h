@@ -263,6 +263,15 @@ public:
 
         vtk_renderer->AddActor(vtk_superquadric_actor);
     }
+
+    /**************************************************************************/
+    void focusOnSuperquadric() {
+        std::lock_guard<std::mutex> lck(mtx);
+        std::vector<double> centroid(3);
+        vtk_superquadric_transform->GetPosition(centroid.data());
+        vtk_camera->SetPosition(0., 0., centroid[2] + .15);
+        vtk_camera->SetFocalPoint(centroid.data());
+    }
 };
 
 }

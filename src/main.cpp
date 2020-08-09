@@ -200,9 +200,10 @@ class Grasper : public RFModule, public rpc_IDL {
     /**************************************************************************/
     bool go() override {
         if (home()) {
-            Time::delay(2.);
+            Time::delay(5.);
             if (segment()) {
                 if (fit()) {
+                    Time::delay(2.);
                     if (grasp()) {
                         return true;
                     }
@@ -336,6 +337,8 @@ class Grasper : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool grasp() override {
+        viewer->focusOnSuperquadric();
+
         // target pose that allows grasing the object
         Vector x({-.24, .18, -.03});
         Vector o({-.14, -.79, .59, 3.07});
