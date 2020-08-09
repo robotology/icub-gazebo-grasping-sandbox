@@ -55,7 +55,7 @@ RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb
     libgsl0-dev libopencv-dev libode-dev liblua5.1-dev lua5.1 git swig qtbase5-dev qtdeclarative5-dev \
     qtmultimedia5-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia \
     qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
-    qml-module-qt-labs-settings libsdl1.2-dev libxml2-dev libv4l-dev \
+    qml-module-qt-labs-settings libsdl1.2-dev libxml2-dev libv4l-dev libcgal-dev \
     debhelper mesa-utils x11-utils cppcheck xsltproc python3-lxml python3-psutil bc netcat-openbsd gnupg2 \
     net-tools libfreeimage-dev libprotoc-dev libprotobuf-dev protobuf-compiler libcurl4-openssl-dev libtar-dev \
     libtbb-dev libogre-1.9-dev pkg-config libqwt-qt5-dev libltdl-dev libgts-dev libboost-program-options-dev \
