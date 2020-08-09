@@ -214,6 +214,10 @@ public:
 
     /**************************************************************************/
     void addSuperquadric(const yarp::os::Bottle& params) {
+        // Note: roundness parameter for axes x and y is shared in SQ model,
+        //       but VTK shares axes x and z (ThetaRoundness).
+        //       To get a good display, directions of axes y and z need to be swapped
+        //       => parameters for y and z are inverted and a rotation of -90 degrees around x is added
         std::lock_guard<std::mutex> lck(mtx);
         const auto x = params.get(0).asDouble();
         const auto y = params.get(1).asDouble();
