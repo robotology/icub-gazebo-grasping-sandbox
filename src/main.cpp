@@ -234,9 +234,10 @@ class GrasperModule : public RFModule, public rpc_IDL {
                 x[1] = -x[1];
             }
             // wait only for the last arm
-            iarm->waitMotionDone(.1, 3.);
+            iarm->waitMotionDone();
         }
 
+        igaze->waitMotionDone();
         return true;
     }
 
@@ -372,48 +373,93 @@ class GrasperModule : public RFModule, public rpc_IDL {
         hand_r.view(ilim);
         double pinkie_min, pinkie_max;
         ilim->getLimits(15, &pinkie_min, &pinkie_max);
-        vector<double> pregrasp_fingers_posture{60., 80., 0., 0., 0., 0., 0., 0., pinkie_max};
+        const vector<double> pregrasp_fingers_posture{60., 80., 0., 0., 0., 0., 0., 0., pinkie_max};
 
         // apply cardinal points grasp algorithm
         ICartesianControl* iarm;
         arm_r.view(iarm);
-        auto grasper = make_unique<CardinalPointsGrasp>(CardinalPointsGrasp("right", pregrasp_fingers_posture));
-        auto candidates = grasper->getCandidates(sqParams, iarm);
-        const auto context = candidates.second;
-        iarm->restoreContext(context);
+        auto grasper_r = make_shared<CardinalPointsGrasp>(CardinalPointsGrasp("right", pregrasp_fingers_posture));
+        const auto candidates_r = grasper_r->getCandidates(sqParams, iarm);
+
+        arm_l.view(iarm);
+        auto grasper_l = make_shared<CardinalPointsGrasp>(CardinalPointsGrasp("left", pregrasp_fingers_posture));
+        const auto candidates_l = grasper_l->getCandidates(sqParams, iarm);
+
+        auto candidates = candidates_r.first;
+        candidates.insert(candidates.end(), candidates_l.first.begin(), candidates_l.first.end());
+        std::sort(candidates.begin(), candidates.end(), CardinalPointsGrasp::compareCandidates);
+
+        // some safety checks
+        if (candidates.empty()) {
+            yError() << "No good grasp candidates found!";
+            return false;
+        }
+
+        // extract relevant info
+        const auto& best = candidates[0];
+        const auto& type = get<0>(best);
+        const auto& err = get<1>(best);
+        const auto& T = get<2>(best);
+
+        if (err * 180. > 10.) {
+            yError() << "No good grasp candidates found!";
+            return false;
+        }
+
+        // select the corresponding arm
+        shared_ptr<CardinalPointsGrasp> grasper;
+        IPositionControl* ihand;
+        int context;
+        if (type == "right") {
+             grasper = grasper_r;
+             hand_r.view(ihand);
+             arm_r.view(iarm);
+             context = candidates_r.second;
+        } else {
+             grasper = grasper_l;
+             hand_l.view(ihand);
+             arm_l.view(iarm);
+             context = candidates_l.second;
+        }
 
         // target pose that allows grasping the object
-        Vector x{-.24, .18, -.03};
-        Vector o{-.14, -.79, .59, 3.07};
+        const auto x = T.getCol(3).subVector(0, 2);
+        const auto o = dcm2axis(T);
 
-        // reach for the pre-grasp pose
-        iarm->goToPoseSync(x + Vector{.07, 0., .03}, o);
-        
+        // enable the context used by the algorithm
+        iarm->restoreContext(context);
+        iarm->setInTargetTol(.001);
+
         // put the hand in the pre-grasp configuration
-        IPositionControl* ihand;
-        hand_r.view(ihand);
         ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
         ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>{60., 60., 60., 60., 60., 60., 60., 60., 200.}.data());
         ihand->positionMove(fingers.size(), fingers.data(), pregrasp_fingers_posture.data());
-        Time::delay(5.);
+        auto done = false;
+        while (!done) {
+            Time::delay(1.);
+            ihand->checkMotionDone(fingers.size(), fingers.data(), &done);
+        };
 
-        // make sure that we've reached for the pre-grasp pose
+        // reach for the pre-grasp pose
+        const auto dir = T.submatrix(0, 2, 0, 2) * grasper->getApproachDirection();
+        iarm->goToPoseSync(x - .07 * dir, o);
         iarm->waitMotionDone(.1, 3.);
         
         // reach for the object
+        iarm->setTrajTime(1.);
         iarm->goToPoseSync(x, o);
-        iarm->waitMotionDone(.1, 5.);
+        iarm->waitMotionDone(.1, 3.);
 
         // close fingers
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>{60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}.data());
 
-        // give time to adjust the contacts
+        // give enough time to adjust the contacts
         Time::delay(5.);
 
         // lift up the object
-        x += {-.07, 0., .1};
-        igaze->lookAtFixationPoint(x);
-        iarm->goToPoseSync(x, o);
+        const auto lift = x + Vector{0., 0., .1};
+        igaze->lookAtFixationPoint(lift);
+        iarm->goToPoseSync(lift, o);
         iarm->waitMotionDone(.1, 3.);
 
         return true;

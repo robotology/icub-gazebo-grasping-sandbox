@@ -76,28 +76,28 @@ public:
 
 /******************************************************************************/
 class Viewer {
-    vtkSmartPointer<vtkRenderer>               vtk_renderer;
-    vtkSmartPointer<vtkRenderWindow>           vtk_renderWindow;
-    vtkSmartPointer<vtkRenderWindowInteractor> vtk_renderWindowInteractor;
-    vtkSmartPointer<UpdateCommand>             vtk_updateCallback;
-    vtkSmartPointer<vtkAxesActor>              vtk_axes;
-    vtkSmartPointer<vtkInteractorStyleSwitch>  vtk_style;
-    vtkSmartPointer<vtkCamera>                 vtk_camera;
-    vtkSmartPointer<vtkPlaneSource>            vtk_floor;
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_floor_mapper;
-    vtkSmartPointer<vtkActor>                  vtk_floor_actor;
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_object_mapper;
-    vtkSmartPointer<vtkPoints>                 vtk_object_points;
-    vtkSmartPointer<vtkUnsignedCharArray>      vtk_object_colors;
-    vtkSmartPointer<vtkPolyData>               vtk_object_polydata;
-    vtkSmartPointer<vtkVertexGlyphFilter>      vtk_object_filter;
-    vtkSmartPointer<vtkActor>                  vtk_object_actor;
-    vtkSmartPointer<vtkSuperquadric>           vtk_superquadric;
-    vtkSmartPointer<vtkSampleFunction>         vtk_superquadric_sample;
-    vtkSmartPointer<vtkContourFilter>          vtk_superquadric_contours;
-    vtkSmartPointer<vtkTransform>              vtk_superquadric_transform;
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_superquadric_mapper;
-    vtkSmartPointer<vtkActor>                  vtk_superquadric_actor;
+    vtkSmartPointer<vtkRenderer>               vtk_renderer{nullptr};
+    vtkSmartPointer<vtkRenderWindow>           vtk_renderWindow{nullptr};
+    vtkSmartPointer<vtkRenderWindowInteractor> vtk_renderWindowInteractor{nullptr};
+    vtkSmartPointer<UpdateCommand>             vtk_updateCallback{nullptr};
+    vtkSmartPointer<vtkAxesActor>              vtk_axes{nullptr};
+    vtkSmartPointer<vtkInteractorStyleSwitch>  vtk_style{nullptr};
+    vtkSmartPointer<vtkCamera>                 vtk_camera{nullptr};
+    vtkSmartPointer<vtkPlaneSource>            vtk_floor{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>         vtk_floor_mapper{nullptr};
+    vtkSmartPointer<vtkActor>                  vtk_floor_actor{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>         vtk_object_mapper{nullptr};
+    vtkSmartPointer<vtkPoints>                 vtk_object_points{nullptr};
+    vtkSmartPointer<vtkUnsignedCharArray>      vtk_object_colors{nullptr};
+    vtkSmartPointer<vtkPolyData>               vtk_object_polydata{nullptr};
+    vtkSmartPointer<vtkVertexGlyphFilter>      vtk_object_filter{nullptr};
+    vtkSmartPointer<vtkActor>                  vtk_object_actor{nullptr};
+    vtkSmartPointer<vtkSuperquadric>           vtk_superquadric{nullptr};
+    vtkSmartPointer<vtkSampleFunction>         vtk_superquadric_sample{nullptr};
+    vtkSmartPointer<vtkContourFilter>          vtk_superquadric_contours{nullptr};
+    vtkSmartPointer<vtkTransform>              vtk_superquadric_transform{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>         vtk_superquadric_mapper{nullptr};
+    vtkSmartPointer<vtkActor>                  vtk_superquadric_actor{nullptr};
 
 public:
     /**************************************************************************/
@@ -159,6 +159,10 @@ public:
     /**************************************************************************/
     void addTable(const std::vector<double>& center, const std::vector<double>& normal) {
         std::lock_guard<std::mutex> lck(mtx);
+        if (vtk_floor_actor) {
+            vtk_renderer->RemoveActor(vtk_floor_actor);
+        }
+
         vtk_floor = vtkSmartPointer<vtkPlaneSource>::New();
         vtk_floor->SetOrigin(0., 0., 0.);
         vtk_floor->SetPoint1(.5, 0., 0.);
@@ -181,6 +185,10 @@ public:
     /**************************************************************************/
     void addObject(std::shared_ptr<yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>> pc) {
         std::lock_guard<std::mutex> lck(mtx);
+        if (vtk_object_actor) {
+            vtk_renderer->RemoveActor(vtk_object_actor);
+        }
+
         vtk_object_points = vtkSmartPointer<vtkPoints>::New();
         vtk_object_colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
         vtk_object_colors->SetNumberOfComponents(3);
@@ -219,6 +227,10 @@ public:
         //       To get a good display, directions of axes y and z need to be swapped
         //       => parameters for y and z are inverted and a rotation of -90 degrees around x is added
         std::lock_guard<std::mutex> lck(mtx);
+        if (vtk_superquadric_actor) {
+            vtk_renderer->RemoveActor(vtk_superquadric_actor);
+        }
+
         const auto x = params.get(0).asDouble();
         const auto y = params.get(1).asDouble();
         const auto z = params.get(2).asDouble();

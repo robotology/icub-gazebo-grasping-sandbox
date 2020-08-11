@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <tuple>
 #include <utility>
 #include <string>
 #include <cmath>
@@ -27,7 +28,7 @@
 
 namespace cardinal_points_grasp {
 
-typedef std::pair<double, yarp::sig::Matrix> ranked_candidates;
+typedef std::tuple<std::string, double, yarp::sig::Matrix> ranked_candidates;
 
 /******************************************************************************/
 class CardinalPointsGrasp {
@@ -36,6 +37,7 @@ class CardinalPointsGrasp {
 
     double pregrasp_aperture{0.};
     double hand_half_height{0.};
+    yarp::sig::Vector approach_direction;
     yarp::sig::Matrix approach;
 
     std::vector<std::unique_ptr<iCub::iKin::iCubFinger>> fingers;
@@ -103,27 +105,27 @@ public:
             }
         }
 
-        // use little finger to account for safety margin to avoid table when side-grasping
+        // use little finger to account for safety margin to avoid hitting the table when side-grasping
         hand_half_height = fingers.back()->EndEffPosition()[1] + .01;
 
         // compute the approach frame wrt the canonical hand-centered frame
-        yarp::sig::Vector rotz{0., 1., 0., sector_beg + pregrasp_aperture_angle * (hand == "right" ? -.5 : .5)};
-        auto approach_direction = yarp::math::axis2dcm(rotz) * yarp::sig::Vector{1., 0., 0., 1.};
+        yarp::sig::Vector rotz{0., 1., 0., sector_beg + pregrasp_aperture_angle * (hand == "right" ? -.65 : .65)};
+        approach_direction = yarp::math::axis2dcm(rotz) * yarp::sig::Vector{1., 0., 0., 1.};
         approach_direction.pop_back();
         const auto angle = std::acos(yarp::math::dot(approach_direction, {0., 0., hand == "right" ? 1. : -1.}));
         approach = yarp::math::axis2dcm({0., 1., 0., hand == "right" ? -angle : angle});
-        const auto approach_origin = approach_direction * (approach_min_distance + .005);
+        const auto approach_origin = -(approach_min_distance + .01) * approach_direction;
         approach.setSubcol(approach_origin, 0, 3);
     }
 
     /**************************************************************************/
-    const auto& getApproach() const {
-        return approach;
+    const auto& getApproachDirection() const {
+        return approach_direction;
     }
 
     /**************************************************************************/
     static auto compareCandidates(const ranked_candidates& c1, const ranked_candidates& c2) { 
-        return (c1.first < c2.first); 
+        return (std::get<1>(c1) < std::get<1>(c2)); 
     } 
 
     /**************************************************************************/
@@ -146,7 +148,6 @@ public:
         auto& opt3 = options.addList();
         opt3.addString("constr_tol"); opt2.addDouble(.000001);
         iarm->tweakSet(options);
-        iarm->setInTargetTol(.001);
         yarp::sig::Vector dof;
         iarm->getDOF(dof);
         dof = 1;
@@ -165,14 +166,14 @@ public:
 
         // generate side-grasp candidates while accounting for size limitations
         if (bz > hand_half_height) {
-            std::vector<yarp::sig::Vector> side_points{{bx, 0., z, 1.}, {0., -by, z, 1.},
-                                                       {-bx, 0., z, 1.}, {0., by, z, 1.}};
+            std::vector<yarp::sig::Vector> side_points{{bx, 0., 0., 1.}, {0., -by, 0., 1.},
+                                                       {-bx, 0., 0., 1.}, {0., by, 0., 1.}};
             for (size_t i = 0; i < side_points.size(); i++) {
-                const auto side = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
                 // prune side points comparing the pre-grasp aperture with the SQ relative size
-                if (((i & 0x01) && (2. * bx < .75 * pregrasp_aperture)) ||
-                    (!(i & 0x01) && (2. * by < .75 * pregrasp_aperture))) {
-                    const auto dir = side - center;
+                if (((i & 0x01) && (2. * bx < .5 * pregrasp_aperture)) ||
+                    (!(i & 0x01) && (2. * by < .5 * pregrasp_aperture))) {
+                    const auto dir = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
+                    const auto side = center + dir;
                     yarp::sig::Vector axis_y{0., 0., -1.};
                     const auto axis_z = (hand == "right" ? -1.: 1.) * (dir / yarp::math::norm(dir));
                     const auto axis_x = yarp::math::cross(axis_y, axis_z);
@@ -184,8 +185,8 @@ public:
                     candidate.setSubcol(axis_z, 0, 2);
                     candidate.setSubcol(side, 0, 3);
                     candidate(3, 3) = 1.;
-                    candidate = yarp::math::SE3inv(approach) * candidate;
-                    candidates.push_back(std::make_pair(evaluateCandidate(candidate, iarm), candidate));
+                    candidate = candidate * approach;
+                    candidates.push_back(std::make_tuple(hand, evaluateCandidate(candidate, iarm), candidate));
                 }
             }
         }
