@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <utility>
 #include <cmath>
 #include <limits>
 #include <fstream>
@@ -35,19 +36,21 @@
 #include <yarp/math/Math.h>
 
 #include "rpc_IDL.h"
-#include "segmentation.h"
 #include "viewer.h"
+#include "segmentation.h"
+#include "cardinal_points_grasp.h"
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace segmentation;
 using namespace viewer;
+using namespace segmentation;
+using namespace cardinal_points_grasp;
 
 /******************************************************************************/
-class Grasper : public RFModule, public rpc_IDL {
+class GrasperModule : public RFModule, public rpc_IDL {
     PolyDriver arm_r,arm_l;
     PolyDriver hand_r,hand_l;
     PolyDriver gaze;
@@ -58,9 +61,9 @@ class Grasper : public RFModule, public rpc_IDL {
     RpcClient sqPort;
 
     vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
-    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_scene;
-    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table;
-    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object;
+    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_scene{nullptr};
+    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_table{nullptr};
+    shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object{nullptr};
 
     Matrix Teye;
     double view_angle{50.};
@@ -75,7 +78,7 @@ class Grasper : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
-    bool savePCL(const string& filename, shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc) {
+    auto savePCL(const string& filename, shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc) {
         ofstream fout(filename);
         if (fout.is_open()) {
             fout << "COFF" << endl;
@@ -94,7 +97,7 @@ class Grasper : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
-    bool helperArmDriverOpener(PolyDriver& arm, const Property& options) {
+    auto helperArmDriverOpener(PolyDriver& arm, const Property& options) {
         const auto t0 = Time::now();
         while (Time::now() - t0 < 10.) {
             // this might fail if controller is not connected to solver yet
@@ -108,7 +111,7 @@ class Grasper : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool configure(ResourceFinder& rf) override {
-        string name = "icub-grasp";
+        const string name = "icub-grasp";
 
         Property arm_r_options;
         arm_r_options.put("device", "cartesiancontrollerclient");
@@ -200,10 +203,8 @@ class Grasper : public RFModule, public rpc_IDL {
     /**************************************************************************/
     bool go() override {
         if (home()) {
-            Time::delay(5.);
             if (segment()) {
                 if (fit()) {
-                    Time::delay(2.);
                     if (grasp()) {
                         return true;
                     }
@@ -218,11 +219,11 @@ class Grasper : public RFModule, public rpc_IDL {
         // home gazing
         IGazeControl* igaze;
         gaze.view(igaze);
-        igaze->lookAtFixationPoint(Vector({-.3, 0., 0.}));
+        igaze->lookAtFixationPoint({-.3, 0., 0.});
 
         // home arms
         {
-            Vector x({-.25, .3, .1});
+            Vector x{-.25, .3, .1};
             vector<PolyDriver*> polys({&arm_r, &arm_l});
             ICartesianControl* iarm;
             for (auto poly:polys) {                
@@ -231,9 +232,10 @@ class Grasper : public RFModule, public rpc_IDL {
                 x[1] = -x[1];
             }
             // wait only for the last arm
-            iarm->waitMotionDone(.1, 3.);
+            iarm->waitMotionDone();
         }
 
+        igaze->waitMotionDone();
         return true;
     }
 
@@ -268,7 +270,7 @@ class Grasper : public RFModule, public rpc_IDL {
         // aggregate image data in the point cloud of the whole scene
         pc_scene = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
         const auto fov_h = (w / 2.) / tan((view_angle / 2.) * (M_PI / 180.));
-        Vector x({0., 0., 0., 1.});
+        Vector x{0., 0., 0., 1.};
         for (int v = 0; v < h; v++) {
             for (int u = 0; u < w; u++) {
                 const auto rgb = (*rgbImage)(u, v);
@@ -293,7 +295,7 @@ class Grasper : public RFModule, public rpc_IDL {
             }
         }
 
-        savePCL("/workspace/pc_scene.off", pc_scene);
+        //savePCL("/workspace/pc_scene.off", pc_scene);
 
         // segment out the table and the object
         pc_table = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
@@ -304,96 +306,178 @@ class Grasper : public RFModule, public rpc_IDL {
             return false;
         }
 
-        savePCL("/workspace/pc_table.off", pc_table);
-        savePCL("/workspace/pc_object.off", pc_object);
+        //savePCL("/workspace/pc_table.off", pc_table);
+        //savePCL("/workspace/pc_object.off", pc_object);
 
         // update viewer
         Vector cam_foc;
         igaze->get3DPointOnPlane(0, {w/2., h/2.}, {0., 0., 1., -table_height}, cam_foc);
-        viewer->addCamera({cam_x[0], cam_x[1], cam_x[2]}, {cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.}, view_angle);
         viewer->addTable({cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.});
         viewer->addObject(pc_object);
+        viewer->addCamera({cam_x[0], cam_x[1], cam_x[2]}, {cam_foc[0], cam_foc[1], cam_foc[2]},
+                          {0., 0., 1.}, view_angle);
 
-        return true;
-    }
-
-    /**************************************************************************/
-    bool fit() override {
-        if (sqPort.getOutputCount() > 0) {
-            // offload object fitting to the external solver
-            const auto ret = sqPort.write(*pc_object, sqParams);
-            if (ret) {
-                viewer->addSuperquadric(sqParams);
-                return true;
-            } else {
-                yError() << "Unable to fit the object!";
-                return false;
-            }
+        if (pc_object->size() > 0) {
+            return true;
         } else {
-            yError() << "Not connected to the solver";
+            yError() << "Unable to segment any object!";
             return false;
         }
     }
 
     /**************************************************************************/
-    bool grasp() override {
-        viewer->focusOnSuperquadric();
+    bool fit() override {
+        if (pc_object) {
+            if (pc_object->size() > 0) {
+                if (sqPort.getOutputCount() > 0) {
+                    // offload object fitting to the external solver
+                    const auto ret = sqPort.write(*pc_object, sqParams);
+                    if (ret) {
+                        viewer->addSuperquadric(sqParams);
+                        return true;
+                    } else {
+                        yError() << "Unable to fit the object!";
+                        return false;
+                    }
+                } else {
+                    yError() << "Not connected to the solver!";
+                    return false;
+                }
+            }
+        }
+        
+        yError() << "No object to fit!";
+        return false;
+    }
 
-        // target pose that allows grasing the object
-        Vector x({-.24, .18, -.03});
-        Vector o({-.14, -.79, .59, 3.07});
+    /**************************************************************************/
+    bool grasp() override {
+        if (sqParams.size() == 0) {
+            yError() << "No object to grasp!";
+            return false;
+        }
+
+        viewer->focusOnSuperquadric();
+        const Vector sqCenter{sqParams.get(0).asDouble(),
+                              sqParams.get(1).asDouble(),
+                              sqParams.get(2).asDouble()};
 
         // keep gazing at the object
         IGazeControl* igaze;
         gaze.view(igaze);
         igaze->setTrackingMode(true);
-        igaze->lookAtFixationPoint(x);
+        igaze->lookAtFixationPoint(sqCenter);
 
-        // reach for the pre-grasp pose
-        ICartesianControl* iarm;
-        arm_r.view(iarm);
-        Vector dof({1, 0, 1, 1, 1, 1, 1, 1, 1, 1});
-        iarm->setDOF(dof, dof);
-        iarm->goToPoseSync(x + Vector({.07, 0., .03}), o);
-        
-        // put the hand in the pre-grasp configuration
-        IPositionControl* ihand;
+        // set up the hand the pre-grasp configuration
         IControlLimits* ilim;
-        hand_r.view(ihand);
         hand_r.view(ilim);
         double pinkie_min, pinkie_max;
         ilim->getLimits(15, &pinkie_min, &pinkie_max);
-        ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
-        ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>({60., 60., 60., 60., 60., 60., 60., 60., 200.}).data());
-        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 0., 0., 0., 0., 0., 0., pinkie_max}).data());
-        Time::delay(5.);
+        const vector<double> pregrasp_fingers_posture{60., 80., 0., 0., 0., 0., 0., 0., pinkie_max};
 
-        // make sure that we've reached for the pre-grasp pose
-        iarm->waitMotionDone(.1, 3.);
-        
-        // increase reaching accuracy
-        Bottle options;
-        Bottle& opt1 = options.addList();
-        opt1.addString("tol"); opt1.addDouble(.001);
-        Bottle& opt2 = options.addList();
-        opt2.addString("constr_tol"); opt2.addDouble(.000001);
-        iarm->tweakSet(options);
+        // apply cardinal points grasp algorithm
+        ICartesianControl* iarm;
+        arm_r.view(iarm);
+        auto grasper_r = make_shared<CardinalPointsGrasp>(CardinalPointsGrasp("right", pregrasp_fingers_posture));
+        const auto candidates_r = grasper_r->getCandidates(sqParams, iarm);
+
+        arm_l.view(iarm);
+        auto grasper_l = make_shared<CardinalPointsGrasp>(CardinalPointsGrasp("left", pregrasp_fingers_posture));
+        const auto candidates_l = grasper_l->getCandidates(sqParams, iarm);
+
+        // aggregate right and left arms candidates
+        auto candidates = candidates_r.first;
+        candidates.insert(candidates.end(), candidates_l.first.begin(), candidates_l.first.end());
+        std::sort(candidates.begin(), candidates.end(), CardinalPointsGrasp::compareCandidates);
+
+        // some safety checks
+        if (candidates.empty()) {
+            yError() << "No good grasp candidates found!";
+            return false;
+        }
+
+        // extract relevant info
+        const auto& best = candidates[0];
+        const auto& type = get<0>(best);
+        const auto& err = get<1>(best);
+        const auto& T = get<2>(best);
+
+        if (err * 180. > 10.) {
+            yError() << "No good grasp candidates found!";
+            return false;
+        }
+
+        // display candidates in 3D
+        {
+            auto candidates_ = candidates;
+            for (auto& c:candidates_) {
+                auto& T = get<2>(c);
+                const auto x = T.getCol(3).subVector(0, 2);
+                const auto axis_x = (sqCenter - x) / norm(sqCenter - x);
+                const Vector axis_y{0., 0., -1.};
+                const auto axis_z = cross(axis_x, axis_y);
+                T.setSubcol(axis_x, 0, 0);
+                T.setSubcol(axis_y, 0, 1);
+                T.setSubcol(axis_z, 0, 2);
+                T.setSubcol(x, 0, 3);
+            }
+            viewer->showCandidates(candidates_);
+        }
+
+        // select arm corresponing to the best candidate
+        shared_ptr<CardinalPointsGrasp> grasper;
+        IPositionControl* ihand;
+        int context;
+        if (type == "right") {
+             grasper = grasper_r;
+             hand_r.view(ihand);
+             arm_r.view(iarm);
+             context = candidates_r.second;
+        } else {
+             grasper = grasper_l;
+             hand_l.view(ihand);
+             arm_l.view(iarm);
+             context = candidates_l.second;
+        }
+
+        // target pose that allows grasping the object
+        const auto x = T.getCol(3).subVector(0, 2);
+        const auto o = dcm2axis(T);
+
+        // enable the context used by the algorithm
+        iarm->restoreContext(context);
         iarm->setInTargetTol(.001);
 
+        // put the hand in the pre-grasp configuration
+        ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
+        ihand->setRefSpeeds(fingers.size(), fingers.data(), vector<double>{60., 60., 60., 60., 60., 60., 60., 60., 200.}.data());
+        ihand->positionMove(fingers.size(), fingers.data(), pregrasp_fingers_posture.data());
+        auto done = false;
+        while (!done) {
+            Time::delay(1.);
+            ihand->checkMotionDone(fingers.size(), fingers.data(), &done);
+        };
+
+        // reach for the pre-grasp pose
+        const auto dir = x - sqCenter;
+        iarm->goToPoseSync(x + .05 * dir / norm(dir), o);
+        iarm->waitMotionDone(.1, 3.);
+        
         // reach for the object
+        iarm->setTrajTime(1.);
         iarm->goToPoseSync(x, o);
-        iarm->waitMotionDone(.1, 5.);
+        iarm->waitMotionDone(.1, 3.);
 
         // close fingers
-        ihand->positionMove(fingers.size(), fingers.data(), vector<double>({60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}).data());
+        ihand->positionMove(fingers.size(), fingers.data(), vector<double>{60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}.data());
 
-        // give time to adjust the contacts
+        // give enough time to adjust the contacts
         Time::delay(5.);
 
         // lift up the object
-        x += Vector({-.07, 0., .1});
-        igaze->lookAtFixationPoint(x);
-        iarm->goToPoseSync(x, o);
+        const auto lift = x + Vector{0., 0., .1};
+        igaze->lookAtFixationPoint(lift);
+        iarm->goToPoseSync(lift, o);
         iarm->waitMotionDone(.1, 3.);
 
         return true;
@@ -457,6 +541,6 @@ int main(int argc, char *argv[]) {
     ResourceFinder rf;
     rf.configure(argc,argv);
 
-    Grasper grasper;
-    return grasper.runModule(rf);
+    GrasperModule module;
+    return module.runModule(rf);
 }

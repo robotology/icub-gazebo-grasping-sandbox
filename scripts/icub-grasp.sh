@@ -16,10 +16,19 @@ yarp wait /icub-grasp/rpc
 echo "go" | yarp rpc /icub-grasp/rpc
 
 sleep 5
-declare -a modules=("icub-gazebo-grasping-sandbox" "find-superquadric" \
-                    "yarpview" "iKinGazeCtrl" "iKinCartesianSolver" \
-                    "yarprobotinterface" "gzclient" "gzserver" \
-                    "yarpdev" "yarpserver")
+declare -a modules=("icub-gazebo-grasping-sandbox" "find-superquadric" "yarpview")
+for module in ${modules[@]}; do
+  killall ${module}
+done
+
+sleep 5
+declare -a modules=("iKinGazeCtrl" "iKinCartesianSolver" "yarprobotinterface")
+for module in ${modules[@]}; do
+  killall ${module}
+done
+
+sleep 5
+declare -a modules=("gzclient" "gzserver" "yarpdev" "yarpserver")
 for module in ${modules[@]}; do
   killall ${module}
 done

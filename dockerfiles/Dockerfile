@@ -43,7 +43,7 @@ RUN git clone https://github.com/novnc/websockify.git /opt/websockify && \
 
 # Clone noVNC
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
-    echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true\"></head></html>" > /opt/novnc/index.html
+    echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&quality=9\"></head></html>" > /opt/novnc/index.html
 
 # Install dependencies
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
