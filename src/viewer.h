@@ -19,9 +19,10 @@
 #include <vtkUnsignedCharArray.h>
 #include <vtkVertexGlyphFilter.h>
 #include <vtkSuperquadric.h>
-#include <vtkTransform.h>
 #include <vtkSampleFunction.h>
 #include <vtkContourFilter.h>
+#include <vtkArrowSource.h>
+#include <vtkTransform.h>
 #include <vtkProperty.h>
 #include <vtkCaptionActor2D.h>
 #include <vtkTextProperty.h>
@@ -37,6 +38,9 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/PointCloud.h>
+#include <yarp/math/Math.h>
+
+#include "cardinal_points_grasp.h"
 
 namespace viewer {
 
@@ -76,28 +80,32 @@ public:
 
 /******************************************************************************/
 class Viewer {
-    vtkSmartPointer<vtkRenderer>               vtk_renderer{nullptr};
-    vtkSmartPointer<vtkRenderWindow>           vtk_renderWindow{nullptr};
-    vtkSmartPointer<vtkRenderWindowInteractor> vtk_renderWindowInteractor{nullptr};
-    vtkSmartPointer<UpdateCommand>             vtk_updateCallback{nullptr};
-    vtkSmartPointer<vtkAxesActor>              vtk_axes{nullptr};
-    vtkSmartPointer<vtkInteractorStyleSwitch>  vtk_style{nullptr};
-    vtkSmartPointer<vtkCamera>                 vtk_camera{nullptr};
-    vtkSmartPointer<vtkPlaneSource>            vtk_floor{nullptr};
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_floor_mapper{nullptr};
-    vtkSmartPointer<vtkActor>                  vtk_floor_actor{nullptr};
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_object_mapper{nullptr};
-    vtkSmartPointer<vtkPoints>                 vtk_object_points{nullptr};
-    vtkSmartPointer<vtkUnsignedCharArray>      vtk_object_colors{nullptr};
-    vtkSmartPointer<vtkPolyData>               vtk_object_polydata{nullptr};
-    vtkSmartPointer<vtkVertexGlyphFilter>      vtk_object_filter{nullptr};
-    vtkSmartPointer<vtkActor>                  vtk_object_actor{nullptr};
-    vtkSmartPointer<vtkSuperquadric>           vtk_superquadric{nullptr};
-    vtkSmartPointer<vtkSampleFunction>         vtk_superquadric_sample{nullptr};
-    vtkSmartPointer<vtkContourFilter>          vtk_superquadric_contours{nullptr};
-    vtkSmartPointer<vtkTransform>              vtk_superquadric_transform{nullptr};
-    vtkSmartPointer<vtkPolyDataMapper>         vtk_superquadric_mapper{nullptr};
-    vtkSmartPointer<vtkActor>                  vtk_superquadric_actor{nullptr};
+    vtkSmartPointer<vtkRenderer>                    vtk_renderer{nullptr};
+    vtkSmartPointer<vtkRenderWindow>                vtk_renderWindow{nullptr};
+    vtkSmartPointer<vtkRenderWindowInteractor>      vtk_renderWindowInteractor{nullptr};
+    vtkSmartPointer<UpdateCommand>                  vtk_updateCallback{nullptr};
+    vtkSmartPointer<vtkAxesActor>                   vtk_axes{nullptr};
+    vtkSmartPointer<vtkInteractorStyleSwitch>       vtk_style{nullptr};
+    vtkSmartPointer<vtkCamera>                      vtk_camera{nullptr};
+    vtkSmartPointer<vtkPlaneSource>                 vtk_floor{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>              vtk_floor_mapper{nullptr};
+    vtkSmartPointer<vtkActor>                       vtk_floor_actor{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>              vtk_object_mapper{nullptr};
+    vtkSmartPointer<vtkPoints>                      vtk_object_points{nullptr};
+    vtkSmartPointer<vtkUnsignedCharArray>           vtk_object_colors{nullptr};
+    vtkSmartPointer<vtkPolyData>                    vtk_object_polydata{nullptr};
+    vtkSmartPointer<vtkVertexGlyphFilter>           vtk_object_filter{nullptr};
+    vtkSmartPointer<vtkActor>                       vtk_object_actor{nullptr};
+    vtkSmartPointer<vtkSuperquadric>                vtk_superquadric{nullptr};
+    vtkSmartPointer<vtkSampleFunction>              vtk_superquadric_sample{nullptr};
+    vtkSmartPointer<vtkContourFilter>               vtk_superquadric_contours{nullptr};
+    vtkSmartPointer<vtkTransform>                   vtk_superquadric_transform{nullptr};
+    vtkSmartPointer<vtkPolyDataMapper>              vtk_superquadric_mapper{nullptr};
+    vtkSmartPointer<vtkActor>                       vtk_superquadric_actor{nullptr};
+    std::vector<vtkSmartPointer<vtkArrowSource>>    vtk_arrows;
+    std::vector<vtkSmartPointer<vtkPolyDataMapper>> vtk_arrows_mappers;
+    std::vector<vtkSmartPointer<vtkTransform>>      vtk_arrows_transforms;
+    std::vector<vtkSmartPointer<vtkActor>>          vtk_arrows_actors;
 
 public:
     /**************************************************************************/
@@ -264,8 +272,8 @@ public:
 
         vtk_superquadric_actor = vtkSmartPointer<vtkActor>::New();
         vtk_superquadric_actor->SetMapper(vtk_superquadric_mapper);
-        vtk_superquadric_actor->GetProperty()->SetColor(0., .3, .6);
-        vtk_superquadric_actor->GetProperty()->SetOpacity(.5);
+        vtk_superquadric_actor->GetProperty()->SetColor(0., 1., 0.);
+        vtk_superquadric_actor->GetProperty()->SetOpacity(.4);
 
         vtk_superquadric_transform = vtkSmartPointer<vtkTransform>::New();
         vtk_superquadric_transform->Translate(x, y, z);
@@ -283,6 +291,59 @@ public:
         vtk_superquadric_transform->GetPosition(centroid.data());
         vtk_camera->SetPosition(0., 0., centroid[2] + .15);
         vtk_camera->SetFocalPoint(centroid.data());
+    }
+
+    /**************************************************************************/
+    void showCandidates(const std::vector<cardinal_points_grasp::ranked_candidates>& candidates) {
+        std::lock_guard<std::mutex> lck(mtx);
+        if (!vtk_arrows_actors.empty()) {
+            for (auto vtk_actor:vtk_arrows_actors) {
+                vtk_renderer->RemoveActor(vtk_actor);
+            }
+            vtk_arrows.clear();
+            vtk_arrows_mappers.clear();
+            vtk_arrows_transforms.clear();
+            vtk_arrows_actors.clear();
+        }
+
+        for (const auto& c:candidates) {
+            const auto& type = std::get<0>(c);
+            const auto& err = std::get<1>(c);
+            const auto& T = std::get<2>(c);
+            const auto L = .1 * (1. - err); // arrows' max length
+
+            vtkSmartPointer<vtkArrowSource> vtk_arrow = vtkSmartPointer<vtkArrowSource>::New();
+            vtk_arrow->SetTipResolution(10);
+            vtk_arrow->SetShaftResolution(10);
+
+            vtkSmartPointer<vtkPolyDataMapper> vtk_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            vtk_mapper->SetInputConnection(vtk_arrow->GetOutputPort());
+
+            vtkSmartPointer<vtkActor> vtk_actor = vtkSmartPointer<vtkActor>::New();
+            vtk_actor->SetMapper(vtk_mapper);
+            if (type == "right") {
+                vtk_actor->GetProperty()->SetColor(0., 0., 1.);
+            } else {
+                vtk_actor->GetProperty()->SetColor(1., 0., 0.);
+            }
+            vtk_actor->GetProperty()->SetOpacity(c == candidates.front() ? .8 : .25);
+
+            vtkSmartPointer<vtkTransform> vtk_transform = vtkSmartPointer<vtkTransform>::New();
+            vtk_transform->Translate(T.getCol(3).subVector(0, 2).data());
+            const auto axisangle = yarp::math::dcm2axis(T);
+            vtk_transform->RotateWXYZ((180. / M_PI) * axisangle[3], axisangle.subVector(0, 2).data());
+            vtk_transform->RotateY(type == "right" ? -90. : 90.);
+            vtk_transform->Translate(-L, 0., 0.);
+            vtk_transform->Scale(L, L, L);
+            vtk_actor->SetUserTransform(vtk_transform);
+
+            vtk_arrows.push_back(vtk_arrow);
+            vtk_arrows_mappers.push_back(vtk_mapper);
+            vtk_arrows_actors.push_back(vtk_actor);
+            vtk_arrows_transforms.push_back(vtk_transform);
+
+            vtk_renderer->AddActor(vtk_actor);
+        }
     }
 };
 

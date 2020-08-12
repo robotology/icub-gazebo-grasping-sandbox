@@ -297,7 +297,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
             }
         }
 
-        savePCL("/workspace/pc_scene.off", pc_scene);
+        //savePCL("/workspace/pc_scene.off", pc_scene);
 
         // segment out the table and the object
         pc_table = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
@@ -308,8 +308,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
             return false;
         }
 
-        savePCL("/workspace/pc_table.off", pc_table);
-        savePCL("/workspace/pc_object.off", pc_object);
+        //savePCL("/workspace/pc_table.off", pc_table);
+        //savePCL("/workspace/pc_object.off", pc_object);
 
         // update viewer
         Vector cam_foc;
@@ -385,6 +385,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         auto grasper_l = make_shared<CardinalPointsGrasp>(CardinalPointsGrasp("left", pregrasp_fingers_posture));
         const auto candidates_l = grasper_l->getCandidates(sqParams, iarm);
 
+        // aggregate right and left arms candidates
         auto candidates = candidates_r.first;
         candidates.insert(candidates.end(), candidates_l.first.begin(), candidates_l.first.end());
         std::sort(candidates.begin(), candidates.end(), CardinalPointsGrasp::compareCandidates);
@@ -406,7 +407,23 @@ class GrasperModule : public RFModule, public rpc_IDL {
             return false;
         }
 
-        // select the corresponding arm
+        // display candidates in 3D
+        {
+            auto candidates_ = candidates;
+            for (auto& c:candidates_) {
+                const auto& type = get<0>(c);
+                auto& T = get<2>(c);
+                auto grasper = (type == "right" ? grasper_r : grasper_l);
+                const auto approach = grasper->getApproachDirection();
+                const Vector axis_x{1., 0., 0.};
+                auto rot = cross(approach, axis_x);
+                rot.push_back(acos(dot(approach, axis_x)));
+                T = T * axis2dcm(rot);
+            }
+            viewer->showCandidates(candidates_);
+        }
+
+        // select arm corresponing to the best candidate
         shared_ptr<CardinalPointsGrasp> grasper;
         IPositionControl* ihand;
         int context;

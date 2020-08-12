@@ -55,7 +55,7 @@ public:
             if (n > (remap.size() >> 1)) {
                 pc_table->clear();
                 pc_object->clear();
-                const auto threshold_2 = h + 1.1F * threshold_1;
+                const auto threshold_2 = h + threshold_1;
                 for (size_t i = 0; i < pc_scene->size(); i++) {
                     const auto& p = (*pc_scene)(i);
                     if (p.z < threshold_2) {
