@@ -32,7 +32,7 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
 
 ## [🐳 Instructions to run the sandbox locally](./dockerfiles)
 
-## Maintainers
+## 👨🏻‍💼 Maintainers
 This repository is maintained by:
 
 | | |
