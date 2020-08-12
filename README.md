@@ -2,6 +2,9 @@
 Sandbox to Simulate Grasping in Gazebo with the iCub
 ====================================================
 
+[![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
+[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/icub)
+
 ## 🌐 Instructions to run the sandbox on the web
 
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
@@ -29,6 +32,13 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
 
 ## [🐳 Instructions to run the sandbox locally](./dockerfiles)
 
+## Maintainers
+This repository is maintained by:
+
+| | |
+|:---:|:---:|
+| [<img src="https://github.com/pattacini.png" width="40">](https://github.com/pattacini) | [@pattacini](https://github.com/pattacini) |
+
 ### 🙏 Acknowledgements
 Special thanks go to [xEnVrE](https://github.com/xEnVrE) for his help on simulating visuomanipulation tasks in Gazebo.
 
@@ -36,4 +46,4 @@ Special thanks go to [xEnVrE](https://github.com/xEnVrE) for his help on simulat
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
 [1]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
-[2]: https://gitpod.io/#https://github.com/icub-tech-iit/icub-gazebo-grasping-sandbox
+[2]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
