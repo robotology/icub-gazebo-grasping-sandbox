@@ -37,7 +37,7 @@ class CardinalPointsGrasp {
 
     double pregrasp_aperture{0.};
     double hand_half_height{0.};
-    yarp::sig::Vector approach_direction;
+    double approach_min_distance{0.};
     yarp::sig::Matrix approach;
 
     std::vector<std::unique_ptr<iCub::iKin::iCubFinger>> fingers;
@@ -51,7 +51,8 @@ class CardinalPointsGrasp {
         yarp::sig::Vector xdhat, odhat, qdhat;
         if (iarm->askForPose(xd, od, xdhat, odhat, qdhat)) {
             if (yarp::math::norm(xd - xdhat) < .005) {
-                const auto rot = yarp::math::dcm2axis(yarp::math::axis2dcm(od) * yarp::math::axis2dcm(odhat).transposed());
+                const auto rot = yarp::math::dcm2axis(yarp::math::axis2dcm(od) *
+                                 yarp::math::axis2dcm(odhat).transposed());
                 return std::abs(rot[3] / M_PI);
             }
         }
@@ -92,7 +93,6 @@ public:
         const auto sector_end = std::atan2(std::abs(p_thumb[2]), p_thumb[0]);
 
         // account for safety margin due to ring and little fingers that might hamper the approach
-        auto approach_min_distance{0.};
         for (size_t i = 3; i < fingers.size(); i++) {
             auto& finger = fingers[i];
             for (size_t link = 0; link < finger->getN(); link++) {
@@ -104,23 +104,13 @@ public:
                 }
             }
         }
+        approach_min_distance += .01;
 
         // use little finger to account for safety margin to avoid hitting the table when side-grasping
         hand_half_height = fingers.back()->EndEffPosition()[1] + .01;
 
         // compute the approach frame wrt the canonical hand-centered frame
-        yarp::sig::Vector rotz{0., 1., 0., sector_beg + pregrasp_aperture_angle * (hand == "right" ? -.65 : .65)};
-        approach_direction = yarp::math::axis2dcm(rotz) * yarp::sig::Vector{1., 0., 0., 1.};
-        approach_direction.pop_back();
-        const auto angle = std::acos(yarp::math::dot(approach_direction, {0., 0., hand == "right" ? 1. : -1.}));
-        approach = yarp::math::axis2dcm({0., 1., 0., hand == "right" ? -angle : angle});
-        const auto approach_origin = -(approach_min_distance + .01) * approach_direction;
-        approach.setSubcol(approach_origin, 0, 3);
-    }
-
-    /**************************************************************************/
-    const auto& getApproachDirection() const {
-        return approach_direction;
+        approach = yarp::math::axis2dcm({0., 1., 0., sector_beg + pregrasp_aperture_angle * (hand == "right" ? -.3 : .3)});
     }
 
     /**************************************************************************/
@@ -172,20 +162,22 @@ public:
                 // prune side points comparing the pre-grasp aperture with the SQ relative size
                 if (((i & 0x01) && (2. * bx < .5 * pregrasp_aperture)) ||
                     (!(i & 0x01) && (2. * by < .5 * pregrasp_aperture))) {
-                    const auto dir = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
+                    auto dir = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
                     const auto side = center + dir;
+                    dir /= yarp::math::norm(dir);
                     yarp::sig::Vector axis_y{0., 0., -1.};
-                    const auto axis_z = (hand == "right" ? -1.: 1.) * (dir / yarp::math::norm(dir));
+                    const auto axis_z = (hand == "right" ? -1.: 1.) * dir;
                     const auto axis_x = yarp::math::cross(axis_y, axis_z);
 
                     // identify grasp frame in the robot root
-                    yarp::sig::Matrix candidate = yarp::math::zeros(4, 4);
+                    auto candidate = yarp::math::zeros(4, 4);
                     candidate.setSubcol(axis_x, 0, 0);
                     candidate.setSubcol(axis_y, 0, 1);
                     candidate.setSubcol(axis_z, 0, 2);
                     candidate.setSubcol(side, 0, 3);
                     candidate(3, 3) = 1.;
                     candidate = candidate * approach;
+                    candidate.setSubcol(candidate.getCol(3).subVector(0, 2) + approach_min_distance * dir, 0, 3);
                     candidates.push_back(std::make_tuple(hand, evaluateCandidate(candidate, iarm), candidate));
                 }
             }

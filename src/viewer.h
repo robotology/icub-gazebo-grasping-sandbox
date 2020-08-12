@@ -332,7 +332,6 @@ public:
             vtk_transform->Translate(T.getCol(3).subVector(0, 2).data());
             const auto axisangle = yarp::math::dcm2axis(T);
             vtk_transform->RotateWXYZ((180. / M_PI) * axisangle[3], axisangle.subVector(0, 2).data());
-            vtk_transform->RotateY(type == "right" ? -90. : 90.);
             vtk_transform->Translate(-L, 0., 0.);
             vtk_transform->Scale(L, L, L);
             vtk_actor->SetUserTransform(vtk_transform);

@@ -203,10 +203,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
     /**************************************************************************/
     bool go() override {
         if (home()) {
-            Time::delay(5.);
             if (segment()) {
                 if (fit()) {
-                    Time::delay(2.);
                     if (grasp()) {
                         return true;
                     }
@@ -314,9 +312,10 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // update viewer
         Vector cam_foc;
         igaze->get3DPointOnPlane(0, {w/2., h/2.}, {0., 0., 1., -table_height}, cam_foc);
-        viewer->addCamera({cam_x[0], cam_x[1], cam_x[2]}, {cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.}, view_angle);
         viewer->addTable({cam_foc[0], cam_foc[1], cam_foc[2]}, {0., 0., 1.});
         viewer->addObject(pc_object);
+        viewer->addCamera({cam_x[0], cam_x[1], cam_x[2]}, {cam_foc[0], cam_foc[1], cam_foc[2]},
+                          {0., 0., 1.}, view_angle);
 
         if (pc_object->size() > 0) {
             return true;
@@ -359,14 +358,15 @@ class GrasperModule : public RFModule, public rpc_IDL {
         }
 
         viewer->focusOnSuperquadric();
+        const Vector sqCenter{sqParams.get(0).asDouble(),
+                              sqParams.get(1).asDouble(),
+                              sqParams.get(2).asDouble()};
 
         // keep gazing at the object
         IGazeControl* igaze;
         gaze.view(igaze);
         igaze->setTrackingMode(true);
-        igaze->lookAtFixationPoint({sqParams.get(0).asDouble(),
-                                    sqParams.get(1).asDouble(),
-                                    sqParams.get(2).asDouble()});
+        igaze->lookAtFixationPoint(sqCenter);
 
         // set up the hand the pre-grasp configuration
         IControlLimits* ilim;
@@ -411,14 +411,15 @@ class GrasperModule : public RFModule, public rpc_IDL {
         {
             auto candidates_ = candidates;
             for (auto& c:candidates_) {
-                const auto& type = get<0>(c);
                 auto& T = get<2>(c);
-                auto grasper = (type == "right" ? grasper_r : grasper_l);
-                const auto approach = grasper->getApproachDirection();
-                const Vector axis_x{1., 0., 0.};
-                auto rot = cross(approach, axis_x);
-                rot.push_back(acos(dot(approach, axis_x)));
-                T = T * axis2dcm(rot);
+                const auto x = T.getCol(3).subVector(0, 2);
+                const auto axis_x = (sqCenter - x) / norm(sqCenter - x);
+                const Vector axis_y{0., 0., -1.};
+                const auto axis_z = cross(axis_x, axis_y);
+                T.setSubcol(axis_x, 0, 0);
+                T.setSubcol(axis_y, 0, 1);
+                T.setSubcol(axis_z, 0, 2);
+                T.setSubcol(x, 0, 3);
             }
             viewer->showCandidates(candidates_);
         }
@@ -458,8 +459,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         };
 
         // reach for the pre-grasp pose
-        const auto dir = T.submatrix(0, 2, 0, 2) * grasper->getApproachDirection();
-        iarm->goToPoseSync(x - .07 * dir, o);
+        const auto dir = x - sqCenter;
+        iarm->goToPoseSync(x + .05 * dir / norm(dir), o);
         iarm->waitMotionDone(.1, 3.);
         
         // reach for the object
