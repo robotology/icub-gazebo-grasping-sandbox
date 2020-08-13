@@ -5,7 +5,7 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/icub)
 
-## 🌐 Instructions to run the sandbox on the web
+## ☁ Instructions to run the sandbox on the web
 
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
 
@@ -30,7 +30,7 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
     <img src="./assets/showcase.png">
 </p>
 
-## [🐳 Instructions to run the sandbox locally](./dockerfiles)
+## [🔽 Instructions to run the sandbox locally](./dockerfiles)
 
 ## 👨🏻‍💼 Maintainers
 This repository is maintained by:
