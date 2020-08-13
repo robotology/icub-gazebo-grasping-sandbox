@@ -48,7 +48,6 @@ RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
 # Install dependencies
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
     wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
-    apt-add-repository -y ppa:dartsim/ppa && \
     apt update && \
     apt install -y libeigen3-dev build-essential cmake cmake-curses-gui coinor-libipopt-dev freeglut3-dev \
     libboost-system-dev libboost-filesystem-dev libboost-thread-dev libtinyxml-dev libace-dev libedit-dev \
@@ -56,24 +55,11 @@ RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb
     qtmultimedia5-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia \
     qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
     qml-module-qt-labs-settings libsdl1.2-dev libxml2-dev libv4l-dev libcgal-dev \
-    debhelper mesa-utils x11-utils cppcheck xsltproc python3-lxml python3-psutil bc netcat-openbsd gnupg2 \
-    net-tools libfreeimage-dev libprotoc-dev libprotobuf-dev protobuf-compiler libcurl4-openssl-dev libtar-dev \
-    libtbb-dev libogre-1.9-dev pkg-config libqwt-qt5-dev libltdl-dev libgts-dev libboost-program-options-dev \
-    libboost-regex-dev libboost-iostreams-dev libignition-common3-dev libignition-fuel-tools4-dev \
-    libignition-transport8-dev libignition-math6-dev libignition-msgs5-dev libtinyxml2-dev libsdformat9-dev \
-    libbullet-dev libsimbody-dev libdart6-all-dev
-
+    gazebo11 libgazebo11-dev
+    
 # Select options
 ARG BRANCH=devel
 ARG BUILD_TYPE=Release
-    
-# Build gazebo
-RUN git clone https://github.com/osrf/gazebo.git --depth 1 --branch gazebo11_11.0.0 && \
-    cd gazebo && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
-    make install && \
-    cd ../.. && rm -Rf gazebo
 
 # Install VTK
 RUN git clone https://github.com/Kitware/VTK.git --depth 1 --branch v9.0.1 && \
@@ -155,7 +141,7 @@ RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prom
 WORKDIR /home/gitpod
 RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
-    echo "source /usr/local/share/gazebo/setup.sh" >> ~/.bashrc && \
+    echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc && \
     echo "export GAZEBO_RESOURCE_PATH=\${GAZEBO_RESOURCE_PATH}:\${ICUBcontrib_DIR}/share/gazebo/worlds" >> ~/.bashrc && \
     echo "export GAZEBO_MODEL_PATH=\${GAZEBO_MODEL_PATH}:/usr/local/share:/usr/local/share/iCub/robots" >> ~/.bashrc && \
     echo "export PATH=\${PATH}:\${ICUBcontrib_DIR}/bin" >> ~/.bashrc
@@ -186,6 +172,9 @@ EXPOSE 6080
 
 # Manage yarp port
 EXPOSE 10000/tcp 10000/udp
+
+# Clean up unnecessary installation products
+RUN rm -Rf /var/lib/apt/lists/*
 
 # Launch bash from /workspace
 WORKDIR /workspace
