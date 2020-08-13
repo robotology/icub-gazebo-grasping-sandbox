@@ -124,7 +124,7 @@ RUN git clone https://github.com/robotology/find-superquadric.git --depth 1 && \
 ENV DISPLAY=:1
 ENV ICUBcontrib_DIR=/workspace/iCubContrib
 ENV YARP_DATA_DIRS=/usr/local/share/yarp:/usr/local/share/iCub:${ICUBcontrib_DIR}/share/ICUBcontrib
-ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/yarp
+ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/yarp:${ICUBcontrib_DIR}/lib
 
 # Create user gitpod
 RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod && \
