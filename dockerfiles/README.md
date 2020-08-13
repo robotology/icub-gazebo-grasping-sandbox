@@ -1,4 +1,4 @@
-🐳 Instructions to run the sandbox locally
+🔽 Instructions to run the sandbox locally
 ==========================================
 
 To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
