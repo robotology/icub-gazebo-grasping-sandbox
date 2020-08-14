@@ -49,11 +49,9 @@
       <uri>model://mustard_bottle</uri>
       <pose>-0.3 -0.05 0.51 0 0 -0.5</pose>
 
-      <!--
       <plugin name="pose_publisher" filename='libgazebo_yarp_modelposepublisher.so'>
          <period>0.02</period>
       </plugin>
-      -->
     </include>
 
     <!-- iCub  -->
