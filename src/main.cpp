@@ -219,7 +219,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // home gazing
         IGazeControl* igaze;
         gaze.view(igaze);
-        igaze->lookAtFixationPoint({-.3, 0., 0.});
+        igaze->lookAtAbsAnglesSync({0., -50., 10.});
 
         // home arms
         {
@@ -479,6 +479,10 @@ class GrasperModule : public RFModule, public rpc_IDL {
         igaze->lookAtFixationPoint(lift);
         iarm->goToPoseSync(lift, o);
         iarm->waitMotionDone(.1, 3.);
+
+        // smile for the camera ;)
+        igaze->lookAtAbsAnglesSync({50., 15., 5.});
+        igaze->waitMotionDone();
 
         return true;
     }
