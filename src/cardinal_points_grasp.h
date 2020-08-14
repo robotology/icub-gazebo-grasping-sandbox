@@ -28,7 +28,7 @@
 
 namespace cardinal_points_grasp {
 
-typedef std::tuple<std::string, double, yarp::sig::Matrix> ranked_candidates;
+typedef std::tuple<std::string, double, yarp::sig::Matrix> rankable_candidate;
 
 /******************************************************************************/
 class CardinalPointsGrasp {
@@ -37,10 +37,25 @@ class CardinalPointsGrasp {
 
     double pregrasp_aperture{0.};
     double hand_half_height{0.};
+    double fingers_max_length{0.};
     double approach_min_distance{0.};
     yarp::sig::Matrix approach;
 
     std::vector<std::unique_ptr<iCub::iKin::iCubFinger>> fingers;
+
+    auto composeCandidate(const yarp::sig::Vector& axis_x, const yarp::sig::Vector& axis_y,
+                          const yarp::sig::Vector& axis_z, const yarp::sig::Vector& point,
+                          const yarp::sig::Vector& dir) const {
+        auto candidate = yarp::math::zeros(4, 4);
+        candidate.setSubcol(axis_x, 0, 0);
+        candidate.setSubcol(axis_y, 0, 1);
+        candidate.setSubcol(axis_z, 0, 2);
+        candidate.setSubcol(point, 0, 3);
+        candidate(3, 3) = 1.;
+        candidate = candidate * approach;
+        candidate.setSubcol(candidate.getCol(3).subVector(0, 2) + approach_min_distance * dir, 0, 3);
+        return candidate;
+    }
 
     /**************************************************************************/
     auto evaluateCandidate(const yarp::sig::Matrix& candidate,
@@ -50,9 +65,11 @@ class CardinalPointsGrasp {
 
         yarp::sig::Vector xdhat, odhat, qdhat;
         if (iarm->askForPose(xd, od, xdhat, odhat, qdhat)) {
+            // always enforce reaching in position first
             if (yarp::math::norm(xd - xdhat) < .005) {
                 const auto rot = yarp::math::dcm2axis(yarp::math::axis2dcm(od) *
                                  yarp::math::axis2dcm(odhat).transposed());
+                // cost in [0, 1] = normalized angle difference
                 return std::abs(rot[3] / M_PI);
             }
         }
@@ -109,18 +126,31 @@ public:
         // use little finger to account for safety margin to avoid hitting the table when side-grasping
         hand_half_height = fingers.back()->EndEffPosition()[1] + .01;
 
+        // compute the fingers max length
+        for (auto& finger:fingers) {
+            auto length = 0.;
+            auto p = finger->EndEffPosition();
+            for (size_t i = 0; i < 3; i++) {
+                auto j = finger->getDOF() - i - 1;
+                auto pi = (j >= 0 ? finger->Position(j) : finger->getH0().getCol(3).subVector(0, 2));
+                length += yarp::math::norm(pi - p);
+                p = pi;
+            }
+            fingers_max_length = std::max(length, fingers_max_length);
+        }
+
         // compute the approach frame wrt the canonical hand-centered frame
         approach = yarp::math::axis2dcm({0., 1., 0., sector_beg + pregrasp_aperture_angle * (hand == "right" ? -.3 : .3)});
     }
 
     /**************************************************************************/
-    static auto compareCandidates(const ranked_candidates& c1, const ranked_candidates& c2) { 
+    static auto compareCandidates(const rankable_candidate& c1, const rankable_candidate& c2) {
         return (std::get<1>(c1) < std::get<1>(c2)); 
     } 
 
     /**************************************************************************/
     auto getCandidates(const yarp::os::Bottle& sq_params, yarp::dev::ICartesianControl* iarm) const {
-        std::vector<ranked_candidates> candidates;
+        std::vector<rankable_candidate> candidates;
         if (iarm==nullptr) {
             return std::make_pair(candidates, 0);
         }
@@ -140,7 +170,7 @@ public:
         iarm->tweakSet(options);
         yarp::sig::Vector dof;
         iarm->getDOF(dof);
-        dof = 1;
+        dof = 1.;
         iarm->setDOF(dof, dof);
 
         // retrieve SQ parameters
@@ -153,13 +183,15 @@ public:
         const auto bz = sq_params.get(6).asDouble();
 
         const yarp::sig::Vector center{x, y, z};
+        const std::vector<yarp::sig::Vector> side_points{{bx, 0., 0., 1.}, {0., -by, 0., 1.},
+                                                         {-bx, 0., 0., 1.}, {0., by, 0., 1.}};
 
-        // generate side-grasp candidates while accounting for size limitations
+        // generate side-grasp candidates
+        std::vector<rankable_candidate> candidates_side;
+        // account for size limitations
         if (bz > hand_half_height) {
-            std::vector<yarp::sig::Vector> side_points{{bx, 0., 0., 1.}, {0., -by, 0., 1.},
-                                                       {-bx, 0., 0., 1.}, {0., by, 0., 1.}};
             for (size_t i = 0; i < side_points.size(); i++) {
-                // prune side points comparing the pre-grasp aperture with the SQ relative size
+                // prune by comparing the pre-grasp aperture with the SQ relative size
                 if (((i & 0x01) && (2. * bx < .5 * pregrasp_aperture)) ||
                     (!(i & 0x01) && (2. * by < .5 * pregrasp_aperture))) {
                     auto dir = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
@@ -168,22 +200,62 @@ public:
                     yarp::sig::Vector axis_y{0., 0., -1.};
                     const auto axis_z = (hand == "right" ? -1.: 1.) * dir;
                     const auto axis_x = yarp::math::cross(axis_y, axis_z);
+                    auto candidate = composeCandidate(axis_x, axis_y, axis_z, side, dir);
+                    candidates_side.push_back(std::make_tuple(hand, evaluateCandidate(candidate, iarm), candidate));
+                }
+            }
+        }
+        std::sort(candidates_side.begin(), candidates_side.end(), compareCandidates);
 
-                    // identify grasp frame in the robot root
-                    auto candidate = yarp::math::zeros(4, 4);
-                    candidate.setSubcol(axis_x, 0, 0);
-                    candidate.setSubcol(axis_y, 0, 1);
-                    candidate.setSubcol(axis_z, 0, 2);
-                    candidate.setSubcol(side, 0, 3);
-                    candidate(3, 3) = 1.;
-                    candidate = candidate * approach;
-                    candidate.setSubcol(candidate.getCol(3).subVector(0, 2) + approach_min_distance * dir, 0, 3);
-                    candidates.push_back(std::make_tuple(hand, evaluateCandidate(candidate, iarm), candidate));
+        // generate top-grasp candidates
+        std::vector<rankable_candidate> candidates_top;
+        const auto top = center + yarp::sig::Vector{0., 0., bz};
+        for (size_t i = 0; i < side_points.size(); i++) {
+            // prune by comparing the pre-grasp aperture with the SQ relative size
+            if (((i & 0x01) && (2. * by < .5 * pregrasp_aperture)) ||
+                (!(i & 0x01) && (2. * bx < .5 * pregrasp_aperture))) {
+                auto axis_x = (yarp::math::axis2dcm({0., 0., 1., angle}) * side_points[i]).subVector(0, 2);
+                axis_x /= yarp::math::norm(axis_x);
+                const yarp::sig::Vector axis_z{0., 0., hand == "right" ? -1.: 1.};
+                const auto axis_y = yarp::math::cross(axis_z, axis_x);
+                auto candidate = composeCandidate(axis_x, axis_y, axis_z, top, {0., 0., 1.});
+                // account for size limitations
+                if (candidate(2, 3) - fingers_max_length > center[2] - bz) {
+                    candidates_top.push_back(std::make_tuple(hand, evaluateCandidate(candidate, iarm), candidate));
+                }
+            }
+        }
+        std::sort(candidates_top.begin(), candidates_top.end(), compareCandidates);
+
+        // special case when best-side ~ best-top
+        std::unique_ptr<rankable_candidate> best_candidate_cog;
+        if (!candidates_side.empty() && !candidates_top.empty()) {
+            const auto& best_side = candidates_side.front();
+            const auto& best_top = candidates_top.front();
+            const auto& err_side = std::get<1>(best_side);
+            const auto& err_top = std::get<1>(best_top);
+            if (std::abs(err_side - err_top) < 5. / 180.) {
+                const auto p_side = std::get<2>(best_side).getCol(3).subVector(0, 2);
+                const auto p_top = std::get<2>(best_top).getCol(3).subVector(0, 2);
+                if (yarp::math::norm(center - p_side) < yarp::math::norm(center - p_top)) {
+                    best_candidate_cog = std::make_unique<rankable_candidate>(best_side);
+                    candidates_side.erase(candidates_side.begin());
+                } else {
+                    best_candidate_cog = std::make_unique<rankable_candidate>(best_top);
+                    candidates_top.erase(candidates_top.begin());
                 }
             }
         }
 
+        // aggregate candidates
+        candidates = candidates_side;
+        candidates.insert(candidates.end(), candidates_top.begin(), candidates_top.end());
         std::sort(candidates.begin(), candidates.end(), compareCandidates);
+
+        // enforce grasp closer to COG
+        if (best_candidate_cog) {
+            candidates.insert(candidates.begin(), *best_candidate_cog);
+        }
 
         // restore backup context
         int context;
