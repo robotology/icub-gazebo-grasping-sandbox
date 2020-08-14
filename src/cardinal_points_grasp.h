@@ -234,7 +234,7 @@ public:
             const auto& best_top = candidates_top.front();
             const auto& err_side = std::get<1>(best_side);
             const auto& err_top = std::get<1>(best_top);
-            if (std::abs(err_side - err_top) < 5. / 180.) {
+            if ((err_side * 180. < 5.) && (err_top * 180. < 5.)) {
                 const auto p_side = std::get<2>(best_side).getCol(3).subVector(0, 2);
                 const auto p_top = std::get<2>(best_top).getCol(3).subVector(0, 2);
                 if (yarp::math::norm(center - p_side) < yarp::math::norm(center - p_top)) {

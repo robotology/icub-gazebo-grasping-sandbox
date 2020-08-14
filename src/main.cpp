@@ -112,6 +112,35 @@ class GrasperModule : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
+    bool lookAtDeveloper() {
+        IGazeControl* igaze;
+        gaze.view(igaze);
+        igaze->lookAtAbsAnglesSync({60., 15., 5.});
+        igaze->waitMotionDone();
+        return true;
+    }
+
+    /**************************************************************************/
+    bool shrug() {
+        Vector x{-.1, .3, .15};
+        Vector o{0., 0., 1., M_PI / 2.};
+        vector<PolyDriver*> polys({&arm_r, &arm_l});
+        ICartesianControl* iarm;
+        for (size_t i = 0; i < polys.size(); i++) {
+            polys[i]->view(iarm);
+            iarm->setPosePriority("orientation");
+            iarm->goToPoseSync(x, o);
+
+            x[1] = -x[1];
+            o = dcm2axis(axis2dcm(o) * axis2dcm({0., 1., 0., M_PI}));
+        }
+
+        // wait only for the last arm
+        iarm->waitMotionDone(.1, 3.);
+        return true;
+    }
+
+    /**************************************************************************/
     bool configure(ResourceFinder& rf) override {
         const string name = "icub-grasp";
 
@@ -226,15 +255,14 @@ class GrasperModule : public RFModule, public rpc_IDL {
             mt19937 mersenne_engine(rnd_device());
             uniform_real_distribution<double> dist_r(0., .05);
             uniform_real_distribution<double> dist_ang(90., 270.);
-            uniform_real_distribution<double> dist_rot(-30., 30.);
+            uniform_real_distribution<double> dist_rot(-45., 45.);
 
-            Vector delta_pose(4);
+            Vector delta_pose(3);
             auto r = dist_r(mersenne_engine);
             auto ang = dist_ang(mersenne_engine) * (M_PI / 180.);
             delta_pose[0] = r * cos(ang);
             delta_pose[1] = r * sin(ang);
-            delta_pose[2] = 0.;
-            delta_pose[3] = dist_rot(mersenne_engine) * (M_PI / 180.);
+            delta_pose[2] = dist_rot(mersenne_engine) * (M_PI / 180.);
             objMoverPort.prepare() = delta_pose;
             objMoverPort.writeStrict();
             return true;
@@ -422,6 +450,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // some safety checks
         if (candidates.empty()) {
             yError() << "No good grasp candidates found!";
+            lookAtDeveloper();
+            shrug();
             return false;
         }
 
@@ -433,6 +463,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         if (err * 180. > 10.) {
             yError() << "No good grasp candidates found!";
+            lookAtDeveloper();
+            shrug();
             return false;
         }
 
@@ -483,8 +515,10 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto o = dcm2axis(T);
 
         // enable the context used by the algorithm
+        iarm->stopControl();
         iarm->restoreContext(context);
         iarm->setInTargetTol(.001);
+        iarm->setTrajTime(1.);
 
         // put the hand in the pre-grasp configuration
         ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
@@ -502,7 +536,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
         iarm->waitMotionDone(.1, 3.);
         
         // reach for the object
-        iarm->setTrajTime(1.);
         iarm->goToPoseSync(x, o);
         iarm->waitMotionDone(.1, 3.);
 
@@ -518,10 +551,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         iarm->goToPoseSync(lift, o);
         iarm->waitMotionDone(.1, 3.);
 
-        // smile for the camera ;)
-        igaze->lookAtAbsAnglesSync({50., 15., 5.});
-        igaze->waitMotionDone();
-
+        lookAtDeveloper();
         return true;
     }
 
@@ -550,12 +580,14 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // restore default contexts
         IGazeControl* igaze;
         gaze.view(igaze);
+        igaze->stopControl();
         igaze->restoreContext(0);
 
         vector<PolyDriver*> polys({&arm_r, &arm_l});
         for (auto poly:polys) {
             ICartesianControl* iarm;
             poly->view(iarm);
+            iarm->stopControl();
             iarm->restoreContext(0);
         }
 

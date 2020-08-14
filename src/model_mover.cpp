@@ -29,14 +29,13 @@ class ModelMover : public ModelPlugin
     /**************************************************************************/
     void onWorldFrame() {
         if (auto* v = port.read(false)) {
-            if (v->length() >= 4) {
+            if (v->length() >= 3) {
                 const auto x = (*v)[0];
                 const auto y = (*v)[1];
-                const auto z = (*v)[2];
-                const auto ang = (*v)[3] / 2.;
+                const auto ang = (*v)[2] / 2.;
                 const auto& p = model->WorldPose();
                 const auto q = p.Rot() * ignition::math::Quaterniond(std::cos(ang), 0., 0., std::sin(ang));
-                ignition::math::Pose3d pose(p.Pos()[0] + x, p.Pos()[1] + y, p.Pos()[2] + z,
+                ignition::math::Pose3d pose(p.Pos()[0] + x, p.Pos()[1] + y, p.Pos()[2],
                                             q.W(), q.X(), q.Y(), q.Z());
                 model->SetWorldPose(pose);
             }
