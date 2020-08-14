@@ -12,6 +12,7 @@
 #include <utility>
 #include <cmath>
 #include <limits>
+#include <random>
 #include <fstream>
 
 #include <yarp/os/Network.h>
@@ -58,6 +59,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
     RpcServer rpcPort;
     BufferedPort<ImageOf<PixelRgb>> rgbPort;
     BufferedPort<ImageOf<PixelFloat>> depthPort;
+    BufferedPort<Vector> objMoverPort;
     RpcClient sqPort;
 
     vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -190,6 +192,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         rgbPort.open("/"+name+"/rgb:i");
         depthPort.open("/"+name+"/depth:i");
+        objMoverPort.open("/"+name+"/obj/mover:o");
         sqPort.open("/"+name+"/sq:rpc");
         rpcPort.open("/"+name+"/rpc");
         attach(rpcPort);
@@ -202,16 +205,42 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool go() override {
-        if (home()) {
-            if (segment()) {
-                if (fit()) {
-                    if (grasp()) {
-                        return true;
+        if (randomize()) {
+            if (home()) {
+                if (segment()) {
+                    if (fit()) {
+                        if (grasp()) {
+                            return true;
+                        }
                     }
                 }
             }
         }
         return false;
+    }
+
+    /**************************************************************************/
+    bool randomize() override {
+        if (objMoverPort.getOutputCount() > 0) {
+            random_device rnd_device;
+            mt19937 mersenne_engine(rnd_device());
+            uniform_real_distribution<double> dist_r(0., .05);
+            uniform_real_distribution<double> dist_ang(90., 270.);
+            uniform_real_distribution<double> dist_rot(-30., 30.);
+
+            Vector delta_pose(4);
+            auto r = dist_r(mersenne_engine);
+            auto ang = dist_ang(mersenne_engine) * (M_PI / 180.);
+            delta_pose[0] = r * cos(ang);
+            delta_pose[1] = r * sin(ang);
+            delta_pose[2] = 0.;
+            delta_pose[3] = dist_rot(mersenne_engine) * (M_PI / 180.);
+            objMoverPort.prepare() = delta_pose;
+            objMoverPort.writeStrict();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**************************************************************************/
@@ -523,6 +552,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         rpcPort.close();
         sqPort.close();
+        objMoverPort.close();
         depthPort.close();
         rgbPort.close();
         gaze.close();

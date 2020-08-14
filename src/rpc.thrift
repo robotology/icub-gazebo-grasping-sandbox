@@ -11,6 +11,12 @@
 service rpc_IDL
 {
    /**
+   * Randomize object location.
+   * @return true/false on success/failure.
+   */
+   bool randomize();
+
+   /**
    * Go home with arms and gaze.
    * @return true/false on success/failure.
    */

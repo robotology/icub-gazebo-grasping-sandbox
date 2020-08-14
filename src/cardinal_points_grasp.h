@@ -104,7 +104,7 @@ public:
                 }
             }
         }
-        approach_min_distance += .01;
+        approach_min_distance += .005;
 
         // use little finger to account for safety margin to avoid hitting the table when side-grasping
         hand_half_height = fingers.back()->EndEffPosition()[1] + .01;
