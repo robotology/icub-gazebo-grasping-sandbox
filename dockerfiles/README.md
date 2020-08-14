@@ -2,7 +2,7 @@
 ==========================================
 
 To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
-1. Pull the docker image:
+1. Pull the docker image (⚠ you may need to [authenticate to GitHub Packages][1] beforehand):
     ```sh
     $ docker pull docker.pkg.github.com/robotology/icub-gazebo-grasping-sandbox/gitpod:{tag}
     ```
@@ -10,7 +10,6 @@ To run the sandbox locally using [Docker](https://www.docker.com), go through th
     ```sh
     $ docker run -it --rm -p 6080:6080 --user gitpod docker.pkg.github.com/robotology/icub-gazebo-grasping-sandbox/gitpod:{tag}
     ```
-    ⚠ You may need to [authenticate to GitHub Packages][1] beforehand.
 1. From within the container shell, launch the following scripts:
     ```sh
     $ init-icubcontrib-local.sh
