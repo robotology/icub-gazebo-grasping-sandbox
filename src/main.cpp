@@ -441,14 +441,23 @@ class GrasperModule : public RFModule, public rpc_IDL {
             auto candidates_ = candidates;
             for (auto& c:candidates_) {
                 auto& T = get<2>(c);
-                const auto x = T.getCol(3).subVector(0, 2);
-                const auto axis_x = (sqCenter - x) / norm(sqCenter - x);
-                const Vector axis_y{0., 0., -1.};
+                const auto p = T.getCol(3).subVector(0, 2);
+                const auto axis_x = (sqCenter - p) / norm(sqCenter - p);
+                // take a generic vector normal to axis_x
+                Vector axis_y;
+                if (abs(axis_x[0]) > .001) {
+                    axis_y = Vector{-axis_x[1] / axis_x[0], 1., 0.};
+                } else if (abs(axis_x[1]) > .001) {
+                    axis_y = Vector{1., -axis_x[0] / axis_x[1], 0.};
+                } else {
+                    axis_y = Vector{0., 1., -axis_x[1] / axis_x[2]};
+                }
+                axis_y /= norm(axis_y);
                 const auto axis_z = cross(axis_x, axis_y);
                 T.setSubcol(axis_x, 0, 0);
                 T.setSubcol(axis_y, 0, 1);
                 T.setSubcol(axis_z, 0, 2);
-                T.setSubcol(x, 0, 3);
+                T.setSubcol(p, 0, 3);
             }
             viewer->showCandidates(candidates_);
         }

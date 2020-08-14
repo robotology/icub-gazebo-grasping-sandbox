@@ -294,7 +294,7 @@ public:
     }
 
     /**************************************************************************/
-    void showCandidates(const std::vector<cardinal_points_grasp::ranked_candidates>& candidates) {
+    void showCandidates(const std::vector<cardinal_points_grasp::rankable_candidate>& candidates) {
         std::lock_guard<std::mutex> lck(mtx);
         if (!vtk_arrows_actors.empty()) {
             for (auto vtk_actor:vtk_arrows_actors) {
