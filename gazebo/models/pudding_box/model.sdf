@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+
+<sdf version="1.7">
+
+  <model name='pudding_box'>
+
+    <link name='pudding_box_link'>
+
+      <inertial>
+        <!-- CoM evaluated using Meshlab assuming a homogeneous body-->
+        <!-- expressed w.r.t. the origin of the mesh -->
+        <pose>0.0007319575846704796 0.00027316657131084697 0.04441599683860103 0 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <!-- Obtained from Meshlab -->
+          <ixx>7.336252036635685e-05</ixx>
+          <ixy>-1.890622701471698e-06</ixy>
+          <ixz>-6.974562529560548e-07</ixz>
+          <iyy>0.0001612440611005154</iyy>
+          <iyz>6.258865744934437e-07</iyz>
+          <izz>0.00010886137507079624</izz>
+        </inertia>
+      </inertial>
+
+      <collision name='pudding_box_collision'>
+        <max_contacts>1</max_contacts>
+        <geometry>
+          <mesh>
+            <uri>model://pudding_box/meshes/obj_000007_collision.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name='pudding_box_visual'>
+        <geometry>
+          <mesh>
+            <uri>model://pudding_box/meshes/obj_000007.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+    </link>
+
+  </model>
+
+</sdf>
