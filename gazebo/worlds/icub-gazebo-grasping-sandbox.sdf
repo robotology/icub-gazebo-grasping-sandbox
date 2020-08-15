@@ -2,12 +2,10 @@
 <sdf version="1.7">
   <world name="default">
 
-    <!-- Global source light -->
     <include>
       <uri>model://sun</uri>
     </include>
 
-    <!-- Tabletop light source -->
     <light name='user_point_light_0' type='point'>
         <pose frame=''>0.197302 -0.215077 1 0 -0 0</pose>
         <diffuse>0.5 0.5 0.5 1</diffuse>
@@ -22,7 +20,6 @@
         <direction>0 0 -1</direction>
     </light>
 
-    <!-- World state -->
     <state world_name='default'>
 
       <light name='sun'>
@@ -34,12 +31,10 @@
       </light>
     </state>
 
-    <!-- Ground plane -->
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
-    <!-- Table -->
     <include>
       <uri>model://table</uri>
       <pose>-0.530772 0 0 0 0 -1.57</pose>
@@ -47,7 +42,7 @@
 
     <include>
       <uri>model://mustard_bottle</uri>
-      <pose>-0.3 0 0.51 0 0 -1.1</pose>
+      <pose>-0.3 0.6 0.51 0 0 0</pose>
 
       <!--
       <plugin name="pose_publisher" filename='libgazebo_yarp_modelposepublisher.so'>
@@ -58,7 +53,19 @@
       <plugin name="pose_mover" filename='libicub-gazebo-grasping-sandbox-model-mover.so'/>
     </include>
 
-    <!-- iCub  -->
+    <include>
+      <uri>model://pudding_box</uri>
+      <pose>-0.5 0.6 0.45 0 0 -0</pose>
+
+      <!--
+      <plugin name="pose_publisher" filename='libgazebo_yarp_modelposepublisher.so'>
+         <period>0.02</period>
+      </plugin>
+      -->
+
+      <plugin name="pose_mover" filename='libicub-gazebo-grasping-sandbox-model-mover.so'/>
+    </include>
+
     <model name="iCub">
       <include>
         <uri>model://iCubGazeboV2_5_visuomanip</uri>
@@ -66,7 +73,6 @@
       </include>
     </model>
 
-    <!-- default camera -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
         <pose frame=''>-1.73754 2.13332 1.77051 0 0.463643 -1.0638</pose>

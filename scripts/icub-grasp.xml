@@ -79,8 +79,14 @@
     </module>
 
     <connection>
-        <from>/icub-grasp/obj/mover:o</from>
+        <from>/icub-grasp/obj-0/mover:o</from>
         <to>/mustard_bottle/model-mover/delta-pose:i</to>
+        <protocol>unix_stream</protocol>
+    </connection>
+
+    <connection>
+        <from>/icub-grasp/obj-1/mover:o</from>
+        <to>/pudding_box/model-mover/delta-pose:i</to>
         <protocol>unix_stream</protocol>
     </connection>
 

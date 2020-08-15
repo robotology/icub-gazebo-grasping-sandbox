@@ -14,8 +14,8 @@
 
 #include <boost/bind.hpp>
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/sig/Vector.h>
 
 namespace gazebo {
 
@@ -24,19 +24,18 @@ class ModelMover : public ModelPlugin
 {
     gazebo::physics::ModelPtr model;
     gazebo::event::ConnectionPtr renderer_connection;
-    yarp::os::BufferedPort<yarp::sig::Vector> port;
+    yarp::os::BufferedPort<yarp::os::Bottle> port;
 
     /**************************************************************************/
     void onWorldFrame() {
         if (auto* v = port.read(false)) {
-            if (v->length() >= 3) {
-                const auto x = (*v)[0];
-                const auto y = (*v)[1];
-                const auto ang = (*v)[2] / 2.;
+            if (v->size() >= 3) {
+                const auto x = v->get(0).asDouble();
+                const auto y = v->get(1).asDouble();
+                const auto ang = v->get(2).asDouble() / 2.;
                 const auto& p = model->WorldPose();
-                const auto q = p.Rot() * ignition::math::Quaterniond(std::cos(ang), 0., 0., std::sin(ang));
-                ignition::math::Pose3d pose(p.Pos()[0] + x, p.Pos()[1] + y, p.Pos()[2],
-                                            q.W(), q.X(), q.Y(), q.Z());
+                const ignition::math::Quaterniond q(std::cos(ang), 0., 0., std::sin(ang));
+                ignition::math::Pose3d pose(x, y, p.Pos()[2], q.W(), q.X(), q.Y(), q.Z());
                 model->SetWorldPose(pose);
             }
         }
