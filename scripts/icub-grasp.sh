@@ -1,8 +1,6 @@
 #!/bin/bash
 
 yarpserver --write --silent &
-#yarpdev --device transformServer --ROS::enable_ros_publisher false --ROS::enable_ros_subscriber false & 
-#yarp wait /transformServer/transforms:o
 gazebo -e dart icub-gazebo-grasping-sandbox.sdf &
 
 sleep 20
@@ -29,7 +27,7 @@ for module in ${modules[@]}; do
 done
 
 sleep 5
-declare -a modules=("gzclient" "gzserver" "yarpdev" "yarpserver")
+declare -a modules=("gzclient" "gzserver" "yarpserver")
 for module in ${modules[@]}; do
   killall ${module}
 done

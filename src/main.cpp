@@ -56,10 +56,12 @@ class GrasperModule : public RFModule, public rpc_IDL {
     PolyDriver hand_r,hand_l;
     PolyDriver gaze;
 
+    BufferedPort<Bottle> worldPort;
+    vector<pair<string, shared_ptr<BufferedPort<Bottle>>>> objMoverPorts;
+
     RpcServer rpcPort;
     BufferedPort<ImageOf<PixelRgb>> rgbPort;
     BufferedPort<ImageOf<PixelFloat>> depthPort;
-    vector<shared_ptr<BufferedPort<Bottle>>> objMoverPorts;
     RpcClient sqPort;
 
     vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -219,12 +221,15 @@ class GrasperModule : public RFModule, public rpc_IDL {
             }
         }
 
+        worldPort.open("/"+name+"/world/eraser:o");
+        vector<string> objects_names{"mustard_bottle", "pudding_box"};
+        for (const auto& object_name:objects_names) {
+            objMoverPorts.push_back(make_pair(object_name, shared_ptr<BufferedPort<Bottle>>(new BufferedPort<Bottle>())));
+            objMoverPorts.back().second->open("/"+name+"/"+object_name+"/mover:o");
+        }
+
         rgbPort.open("/"+name+"/rgb:i");
         depthPort.open("/"+name+"/depth:i");
-        for (size_t i = 0; i < 2; i++) {
-            objMoverPorts.push_back(shared_ptr<BufferedPort<Bottle>>(new BufferedPort<Bottle>()));
-            objMoverPorts.back()->open("/"+name+"/obj-"+to_string(i)+"/mover:o");
-        }
         sqPort.open("/"+name+"/sq:rpc");
         rpcPort.open("/"+name+"/rpc");
         attach(rpcPort);
@@ -258,7 +263,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         uniform_real_distribution<double> dist_p(0., (double)(objMoverPorts.size() - 1));
         const auto i = (size_t)round(dist_p(mersenne_engine));
 
-        auto port = objMoverPorts[i];
+        auto port = objMoverPorts[i].second;
         if (port->getOutputCount() > 0) {
             uniform_real_distribution<double> dist_r(0., .05);
             uniform_real_distribution<double> dist_ang(90., 270.);
@@ -272,10 +277,24 @@ class GrasperModule : public RFModule, public rpc_IDL {
             delta_pose.addDouble(dist_rot(mersenne_engine) * (M_PI / 180.));
             port->prepare() = delta_pose;
             port->writeStrict();
+
+            if (worldPort.getOutputCount() > 0) {
+                for (auto p:objMoverPorts) {
+                    if (p.second != port) {
+                        Bottle disable_object;
+                        disable_object.addString(p.first);
+                        worldPort.prepare() = disable_object;
+                        worldPort.writeStrict();
+                    }
+                }
+            } else {
+                return false;
+            }
+
             return true;
-        } else {
-            return false;
         }
+        
+        return false;
     }
 
     /**************************************************************************/
@@ -422,9 +441,23 @@ class GrasperModule : public RFModule, public rpc_IDL {
         }
 
         viewer->focusOnSuperquadric();
-        const Vector sqCenter{sqParams.get(0).asDouble(),
-                              sqParams.get(1).asDouble(),
-                              sqParams.get(2).asDouble()};
+
+        // retrieve SQ parameters
+        const auto sq_x = sqParams.get(0).asDouble();
+        const auto sq_y = sqParams.get(1).asDouble();
+        const auto sq_z = sqParams.get(2).asDouble();
+        const auto sq_angle = sqParams.get(3).asDouble() * (M_PI / 180.);
+        const auto sq_bx = sqParams.get(4).asDouble();
+        const auto sq_by = sqParams.get(5).asDouble();
+        const auto sq_bz = sqParams.get(6).asDouble();
+
+        const Vector sqCenter{sq_x, sq_y, sq_z};
+        vector<Vector> sqPoints{{sq_bx, 0., 0., 1.}, {0., -sq_by, 0., 1.},
+                                {-sq_bx, 0., 0., 1.}, {0., sq_by, 0., 1.},
+                                {0., 0., sq_bz, 1.}};
+        for (auto& p:sqPoints) {
+            p = sqCenter + (yarp::math::axis2dcm({0., 0., 1., sq_angle}) * p).subVector(0, 2);
+        }
 
         // keep gazing at the object
         IGazeControl* igaze;
@@ -465,15 +498,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // extract relevant info
         const auto& best = candidates[0];
         const auto& type = get<0>(best);
-        const auto& err = get<1>(best);
         const auto& T = get<2>(best);
-
-        if (err * 180. > 10.) {
-            yError() << "No good grasp candidates found!";
-            lookAtDeveloper();
-            shrug();
-            return false;
-        }
 
         // display candidates in 3D
         {
@@ -481,7 +506,16 @@ class GrasperModule : public RFModule, public rpc_IDL {
             for (auto& c:candidates_) {
                 auto& T = get<2>(c);
                 const auto p = T.getCol(3).subVector(0, 2);
-                const auto axis_x = (sqCenter - p) / norm(sqCenter - p);
+                Vector sq_p;
+                auto max_d{numeric_limits<double>::infinity()};
+                for (const auto& sq_p_:sqPoints) {
+                    const auto d = norm(p - sq_p_);
+                    if (d < max_d) {
+                        max_d = d;
+                        sq_p = sq_p_;
+                    }
+                }
+                const auto axis_x = (sqCenter - sq_p) / norm(sqCenter - sq_p);
                 // take a generic vector normal to axis_x
                 Vector axis_y;
                 if (abs(axis_x[0]) > .001) {
@@ -496,7 +530,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
                 T.setSubcol(axis_x, 0, 0);
                 T.setSubcol(axis_y, 0, 1);
                 T.setSubcol(axis_z, 0, 2);
-                T.setSubcol(p, 0, 3);
+                T.setSubcol(sq_p, 0, 3);
             }
             viewer->showCandidates(candidates_);
         }
@@ -600,11 +634,12 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         rpcPort.close();
         sqPort.close();
-        for (auto port:objMoverPorts) {
-            port->close();
-        }
         depthPort.close();
         rgbPort.close();
+        for (auto port:objMoverPorts) {
+            port.second->close();
+        }
+        worldPort.close();
         gaze.close();
         arm_r.close();
         arm_l.close();
