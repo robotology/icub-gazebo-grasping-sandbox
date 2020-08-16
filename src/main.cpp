@@ -442,22 +442,9 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         viewer->focusOnSuperquadric();
 
-        // retrieve SQ parameters
-        const auto sq_x = sqParams.get(0).asDouble();
-        const auto sq_y = sqParams.get(1).asDouble();
-        const auto sq_z = sqParams.get(2).asDouble();
-        const auto sq_angle = sqParams.get(3).asDouble() * (M_PI / 180.);
-        const auto sq_bx = sqParams.get(4).asDouble();
-        const auto sq_by = sqParams.get(5).asDouble();
-        const auto sq_bz = sqParams.get(6).asDouble();
-
-        const Vector sqCenter{sq_x, sq_y, sq_z};
-        vector<Vector> sqPoints{{sq_bx, 0., 0., 1.}, {0., -sq_by, 0., 1.},
-                                {-sq_bx, 0., 0., 1.}, {0., sq_by, 0., 1.},
-                                {0., 0., sq_bz, 1.}};
-        for (auto& p:sqPoints) {
-            p = sqCenter + (yarp::math::axis2dcm({0., 0., 1., sq_angle}) * p).subVector(0, 2);
-        }
+        const Vector sqCenter{sqParams.get(0).asDouble(),
+                              sqParams.get(1).asDouble(),
+                              sqParams.get(2).asDouble()};
 
         // keep gazing at the object
         IGazeControl* igaze;
@@ -500,40 +487,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto& type = get<0>(best);
         const auto& T = get<2>(best);
 
-        // display candidates in 3D
-        {
-            auto candidates_ = candidates;
-            for (auto& c:candidates_) {
-                auto& T = get<2>(c);
-                const auto p = T.getCol(3).subVector(0, 2);
-                Vector sq_p;
-                auto max_d{numeric_limits<double>::infinity()};
-                for (const auto& sq_p_:sqPoints) {
-                    const auto d = norm(p - sq_p_);
-                    if (d < max_d) {
-                        max_d = d;
-                        sq_p = sq_p_;
-                    }
-                }
-                const auto axis_x = (sqCenter - sq_p) / norm(sqCenter - sq_p);
-                // take a generic vector normal to axis_x
-                Vector axis_y;
-                if (abs(axis_x[0]) > .001) {
-                    axis_y = Vector{-axis_x[1] / axis_x[0], 1., 0.};
-                } else if (abs(axis_x[1]) > .001) {
-                    axis_y = Vector{1., -axis_x[0] / axis_x[1], 0.};
-                } else {
-                    axis_y = Vector{0., 1., -axis_x[1] / axis_x[2]};
-                }
-                axis_y /= norm(axis_y);
-                const auto axis_z = cross(axis_x, axis_y);
-                T.setSubcol(axis_x, 0, 0);
-                T.setSubcol(axis_y, 0, 1);
-                T.setSubcol(axis_z, 0, 2);
-                T.setSubcol(sq_p, 0, 3);
-            }
-            viewer->showCandidates(candidates_);
-        }
+        viewer->showCandidates(candidates);
 
         // select arm corresponing to the best candidate
         shared_ptr<CardinalPointsGrasp> grasper;
