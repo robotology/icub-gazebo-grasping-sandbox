@@ -2,7 +2,7 @@
 name: Ad Request
 about: Template for advertising your work.
 title: ''
-labels: '📢 ad-request'
+labels: '📢 ad request'
 assignees: 'pattacini'
 
 ---
