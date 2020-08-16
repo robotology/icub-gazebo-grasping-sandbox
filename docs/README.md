@@ -30,9 +30,9 @@ The objective is to let iCub grasp them one at time. Therefore, one of the two o
 selected and presented to the robot.
 
 The second object gets simply removed from the simulated world in order to spare computations from the
-physics engine standpoint. In fact, as it turns out evident while running the sandbox, Gazebo is pretty
-much demanding so that the resources made available from within the Gitpod workspace are not sufficient
-to let the simulation proceed smoothly. You may consider getting around this limitations by [running the
+standpoint of the physics engine. In fact, as it turns out evident while running the sandbox, Gazebo is
+pretty demanding so that the resources made available from within the Gitpod workspace are not sufficient
+to let the simulation flow smoothly. You may consider getting around these limitations by [running the
 sandbox locally on your PC][5].
 
 A couple of considerations:
@@ -53,7 +53,9 @@ A couple of considerations:
 The 3D point cloud of the scene acquired from the iCub cameras is processed in order to segment out the
 object from the table using a naive [**RANSAC**][6]. The resulting partial point cloud of the object is used
 to construct a compact **3D representation based on superquadrics** by recruiting a nonlinear fitting.
-This operation is performed by the external module [**find-superquadric**][7].
+This operation is performed by the external module [**`find-superquadric`**][7]. In particular, the
+superquadric allows us to get a good guess of how the shape of the object may be completed in the hidden
+area, clearly leveraging on the hypothesis of symmetry.
 
 Here below you can find two examples of superquadric representations (the greenish surface) superimposed
 on the point clouds of the objects:
