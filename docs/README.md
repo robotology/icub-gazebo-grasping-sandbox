@@ -31,9 +31,9 @@ selected and presented to the robot.
 
 The second object gets simply removed from the simulated world in order to spare computations from the
 physics engine standpoint. In fact, as it turns out evident while running the sandbox, Gazebo is pretty
-much demanding so that the resource made available from within the Gitpod workspace are not sufficient
+much demanding so that the resources made available from within the Gitpod workspace are not sufficient
 to let the simulation proceed smoothly. You may consider getting around this limitations by [running the
-sandbox locally to your PC][5].
+sandbox locally on your PC][5].
 
 A couple of considerations:
 - The two YCB objects have been identified to own the suitable geometric properties that elicit side and top grasps separately.
