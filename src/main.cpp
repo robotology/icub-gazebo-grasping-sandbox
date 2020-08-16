@@ -56,10 +56,12 @@ class GrasperModule : public RFModule, public rpc_IDL {
     PolyDriver hand_r,hand_l;
     PolyDriver gaze;
 
+    BufferedPort<Bottle> worldPort;
+    vector<pair<string, shared_ptr<BufferedPort<Bottle>>>> objMoverPorts;
+
     RpcServer rpcPort;
     BufferedPort<ImageOf<PixelRgb>> rgbPort;
     BufferedPort<ImageOf<PixelFloat>> depthPort;
-    BufferedPort<Vector> objMoverPort;
     RpcClient sqPort;
 
     vector<int> fingers = {7, 8, 9, 10, 11, 12, 13, 14, 15};
@@ -219,9 +221,15 @@ class GrasperModule : public RFModule, public rpc_IDL {
             }
         }
 
+        worldPort.open("/"+name+"/world/eraser:o");
+        vector<string> objects_names{"mustard_bottle", "pudding_box"};
+        for (const auto& object_name:objects_names) {
+            objMoverPorts.push_back(make_pair(object_name, shared_ptr<BufferedPort<Bottle>>(new BufferedPort<Bottle>())));
+            objMoverPorts.back().second->open("/"+name+"/"+object_name+"/mover:o");
+        }
+
         rgbPort.open("/"+name+"/rgb:i");
         depthPort.open("/"+name+"/depth:i");
-        objMoverPort.open("/"+name+"/obj/mover:o");
         sqPort.open("/"+name+"/sq:rpc");
         rpcPort.open("/"+name+"/rpc");
         attach(rpcPort);
@@ -250,25 +258,43 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool randomize() override {
-        if (objMoverPort.getOutputCount() > 0) {
-            random_device rnd_device;
-            mt19937 mersenne_engine(rnd_device());
+        random_device rnd_device;
+        mt19937 mersenne_engine(rnd_device());
+        uniform_real_distribution<double> dist_p(0., (double)(objMoverPorts.size() - 1));
+        const auto i = (size_t)round(dist_p(mersenne_engine));
+
+        auto port = objMoverPorts[i].second;
+        if (port->getOutputCount() > 0) {
             uniform_real_distribution<double> dist_r(0., .05);
             uniform_real_distribution<double> dist_ang(90., 270.);
-            uniform_real_distribution<double> dist_rot(-45., 45.);
+            uniform_real_distribution<double> dist_rot(-180., 180.);
 
-            Vector delta_pose(3);
+            Bottle delta_pose;
             auto r = dist_r(mersenne_engine);
             auto ang = dist_ang(mersenne_engine) * (M_PI / 180.);
-            delta_pose[0] = r * cos(ang);
-            delta_pose[1] = r * sin(ang);
-            delta_pose[2] = dist_rot(mersenne_engine) * (M_PI / 180.);
-            objMoverPort.prepare() = delta_pose;
-            objMoverPort.writeStrict();
+            delta_pose.addDouble(-.35 + r * cos(ang));
+            delta_pose.addDouble(r * sin(ang));
+            delta_pose.addDouble(dist_rot(mersenne_engine) * (M_PI / 180.));
+            port->prepare() = delta_pose;
+            port->writeStrict();
+
+            if (worldPort.getOutputCount() > 0) {
+                for (auto p:objMoverPorts) {
+                    if (p.second != port) {
+                        Bottle disable_object;
+                        disable_object.addString(p.first);
+                        worldPort.prepare() = disable_object;
+                        worldPort.writeStrict();
+                    }
+                }
+            } else {
+                return false;
+            }
+
             return true;
-        } else {
-            return false;
         }
+        
+        return false;
     }
 
     /**************************************************************************/
@@ -415,6 +441,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         }
 
         viewer->focusOnSuperquadric();
+
         const Vector sqCenter{sqParams.get(0).asDouble(),
                               sqParams.get(1).asDouble(),
                               sqParams.get(2).asDouble()};
@@ -458,41 +485,9 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // extract relevant info
         const auto& best = candidates[0];
         const auto& type = get<0>(best);
-        const auto& err = get<1>(best);
         const auto& T = get<2>(best);
 
-        if (err * 180. > 10.) {
-            yError() << "No good grasp candidates found!";
-            lookAtDeveloper();
-            shrug();
-            return false;
-        }
-
-        // display candidates in 3D
-        {
-            auto candidates_ = candidates;
-            for (auto& c:candidates_) {
-                auto& T = get<2>(c);
-                const auto p = T.getCol(3).subVector(0, 2);
-                const auto axis_x = (sqCenter - p) / norm(sqCenter - p);
-                // take a generic vector normal to axis_x
-                Vector axis_y;
-                if (abs(axis_x[0]) > .001) {
-                    axis_y = Vector{-axis_x[1] / axis_x[0], 1., 0.};
-                } else if (abs(axis_x[1]) > .001) {
-                    axis_y = Vector{1., -axis_x[0] / axis_x[1], 0.};
-                } else {
-                    axis_y = Vector{0., 1., -axis_x[1] / axis_x[2]};
-                }
-                axis_y /= norm(axis_y);
-                const auto axis_z = cross(axis_x, axis_y);
-                T.setSubcol(axis_x, 0, 0);
-                T.setSubcol(axis_y, 0, 1);
-                T.setSubcol(axis_z, 0, 2);
-                T.setSubcol(p, 0, 3);
-            }
-            viewer->showCandidates(candidates_);
-        }
+        viewer->showCandidates(candidates);
 
         // select arm corresponing to the best candidate
         shared_ptr<CardinalPointsGrasp> grasper;
@@ -593,9 +588,12 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         rpcPort.close();
         sqPort.close();
-        objMoverPort.close();
         depthPort.close();
         rgbPort.close();
+        for (auto port:objMoverPorts) {
+            port.second->close();
+        }
+        worldPort.close();
         gaze.close();
         arm_r.close();
         arm_l.close();

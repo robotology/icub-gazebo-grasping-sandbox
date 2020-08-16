@@ -10,6 +10,8 @@
 
 #include <mutex>
 #include <vector>
+#include <cmath>
+#include <limits>
 
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
@@ -106,6 +108,8 @@ class Viewer {
     std::vector<vtkSmartPointer<vtkPolyDataMapper>> vtk_arrows_mappers;
     std::vector<vtkSmartPointer<vtkTransform>>      vtk_arrows_transforms;
     std::vector<vtkSmartPointer<vtkActor>>          vtk_arrows_actors;
+
+    yarp::os::Bottle sqParams;
 
 public:
     /**************************************************************************/
@@ -230,24 +234,25 @@ public:
 
     /**************************************************************************/
     void addSuperquadric(const yarp::os::Bottle& params) {
-        // Note: roundness parameter for axes x and y is shared in SQ model,
-        //       but VTK shares axes x and z (ThetaRoundness).
-        //       To get a good display, directions of axes y and z need to be swapped
-        //       => parameters for y and z are inverted and a rotation of -90 degrees around x is added
         std::lock_guard<std::mutex> lck(mtx);
         if (vtk_superquadric_actor) {
             vtk_renderer->RemoveActor(vtk_superquadric_actor);
         }
 
-        const auto x = params.get(0).asDouble();
-        const auto y = params.get(1).asDouble();
-        const auto z = params.get(2).asDouble();
-        const auto angle = params.get(3).asDouble();
-        const auto bx = params.get(4).asDouble();
-        const auto by = params.get(6).asDouble();
-        const auto bz = params.get(5).asDouble();
-        const auto eps_1 = params.get(7).asDouble();
-        const auto eps_2 = params.get(8).asDouble();
+        sqParams = params;
+        // Note: roundness parameter for axes x and y is shared in SQ model,
+        //       but VTK shares axes x and z (ThetaRoundness).
+        //       To get a good display, directions of axes y and z need to be swapped
+        //       => parameters for y and z are inverted and a rotation of -90 degrees around x is added
+        const auto x = sqParams.get(0).asDouble();
+        const auto y = sqParams.get(1).asDouble();
+        const auto z = sqParams.get(2).asDouble();
+        const auto angle = sqParams.get(3).asDouble();
+        const auto bx = sqParams.get(4).asDouble();
+        const auto by = sqParams.get(6).asDouble();
+        const auto bz = sqParams.get(5).asDouble();
+        const auto eps_1 = sqParams.get(7).asDouble();
+        const auto eps_2 = sqParams.get(8).asDouble();
 
         vtk_superquadric = vtkSmartPointer<vtkSuperquadric>::New();
         vtk_superquadric->ToroidalOff();
@@ -294,7 +299,7 @@ public:
     }
 
     /**************************************************************************/
-    void showCandidates(const std::vector<cardinal_points_grasp::rankable_candidate>& candidates) {
+    bool showCandidates(const std::vector<cardinal_points_grasp::rankable_candidate>& candidates) {
         std::lock_guard<std::mutex> lck(mtx);
         if (!vtk_arrows_actors.empty()) {
             for (auto vtk_actor:vtk_arrows_actors) {
@@ -306,11 +311,58 @@ public:
             vtk_arrows_actors.clear();
         }
 
+        if (sqParams.size() == 0){
+            return false;
+        }
+
+        const auto x = sqParams.get(0).asDouble();
+        const auto y = sqParams.get(1).asDouble();
+        const auto z = sqParams.get(2).asDouble();
+        const auto angle = sqParams.get(3).asDouble() * (M_PI / 180.);
+        const auto bx = sqParams.get(4).asDouble();
+        const auto by = sqParams.get(5).asDouble();
+        const auto bz = sqParams.get(6).asDouble();
+
+        const yarp::sig::Vector sqCenter{x, y, z};
+        std::vector<yarp::sig::Vector> sqPoints{{bx, 0., 0., 1.}, {0., -by, 0., 1.},
+                                                {-bx, 0., 0., 1.}, {0., by, 0., 1.},
+                                                {0., 0., bz, 1.}};
+        for (auto& sq_p_:sqPoints) {
+            sq_p_ = sqCenter + (yarp::math::axis2dcm({0., 0., 1., angle}) * sq_p_).subVector(0, 2);
+        }
+
         for (const auto& c:candidates) {
             const auto& type = std::get<0>(c);
             const auto& err = std::get<1>(c);
-            const auto& T = std::get<2>(c);
+            auto T = std::get<2>(c);
             const auto L = .1 * (1. - err); // arrows' max length
+
+            const auto p = T.getCol(3).subVector(0, 2);
+            yarp::sig::Vector sq_p;
+            auto max_d{std::numeric_limits<double>::infinity()};
+            for (const auto& sq_p_:sqPoints) {
+                const auto d = yarp::math::norm(p - sq_p_);
+                if (d < max_d) {
+                    max_d = d;
+                    sq_p = sq_p_;
+                }
+            }
+            const auto axis_x = (sqCenter - sq_p) / yarp::math::norm(sqCenter - sq_p);
+            // take a generic vector normal to axis_x
+            yarp::sig::Vector axis_y;
+            if (std::abs(axis_x[0]) > .001) {
+                axis_y = yarp::sig::Vector{-axis_x[1] / axis_x[0], 1., 0.};
+            } else if (std::abs(axis_x[1]) > .001) {
+                axis_y = yarp::sig::Vector{1., -axis_x[0] / axis_x[1], 0.};
+            } else {
+                axis_y = yarp::sig::Vector{0., 1., -axis_x[1] / axis_x[2]};
+            }
+            axis_y /= yarp::math::norm(axis_y);
+            const auto axis_z = yarp::math::cross(axis_x, axis_y);
+            T.setSubcol(axis_x, 0, 0);
+            T.setSubcol(axis_y, 0, 1);
+            T.setSubcol(axis_z, 0, 2);
+            T.setSubcol(sq_p, 0, 3);
 
             vtkSmartPointer<vtkArrowSource> vtk_arrow = vtkSmartPointer<vtkArrowSource>::New();
             vtk_arrow->SetTipResolution(10);
@@ -343,6 +395,8 @@ public:
 
             vtk_renderer->AddActor(vtk_actor);
         }
+
+        return true;
     }
 };
 

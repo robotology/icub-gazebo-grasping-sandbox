@@ -2,8 +2,7 @@
 
 declare -a modules=("icub-gazebo-grasping-sandbox" "find-superquadric" \
                     "yarpview" "iKinGazeCtrl" "iKinCartesianSolver" \
-                    "yarprobotinterface" "gzclient" "gzserver" \
-                    "yarpdev" "yarpserver")
+                    "yarprobotinterface" "gzclient" "gzserver" "yarpserver")
 for module in ${modules[@]}; do
   killall -9 ${module}
 done
