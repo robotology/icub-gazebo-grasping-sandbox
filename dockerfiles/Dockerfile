@@ -17,33 +17,19 @@ RUN apt install -y apt-utils software-properties-common apt-transport-https sudo
 RUN locale-gen en_US.UTF-8
 
 # Install graphics
-RUN apt install -y xfce4 xfce4-goodies xserver-xorg-video-dummy xserver-xorg-legacy firefox && \
+RUN apt install -y xfce4 xfce4-goodies xserver-xorg-video-dummy xserver-xorg-legacy x11vnc firefox && \
     sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
 COPY xorg.conf /etc/X11/xorg.conf
 RUN dos2unix /etc/X11/xorg.conf
 
-# We need the most recent x11vnc
-RUN sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list && \
-    apt update && \
-    git clone https://github.com/LibVNC/x11vnc.git /opt/x11vnc && \
-    cd /opt/x11vnc && \
-    apt build-dep -y x11vnc && \
-    autoreconf -fiv && \
-    ./configure && \
-    make && make install && \
-    rm -Rf /opt/x11vnc
-
 # Install python
-RUN apt install -y python3 python3-dev python3-pip python3-setuptools
+RUN apt install -y python3 python3-dev python3-pip python3-setuptools && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
-# Install websockify
-RUN git clone https://github.com/novnc/websockify.git /opt/websockify && \
-    cd /opt/websockify && \
-    python3 setup.py install
-
-# Clone noVNC
+# Install noVNC
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
-    echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&quality=9\"></head></html>" > /opt/novnc/index.html
+    git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
+    echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&resize=scale&quality=9\"></head></html>" > /opt/novnc/index.html
 
 # Install dependencies
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
