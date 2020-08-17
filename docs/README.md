@@ -90,7 +90,7 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
 
 Also, don't hesitate to [**fork the sandbox**][8] to build on top new interesting methods 🧪
-And don't forget to let us know about your progress by [opening up an **Ad Request**][9] 👋🏻 
+and don't forget to let us know about your progress by [opening up an **Ad Request**][9] 👋🏻 
 
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
