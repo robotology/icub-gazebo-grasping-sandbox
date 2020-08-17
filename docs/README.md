@@ -103,4 +103,4 @@ And don't forget to let us know about your progress by [opening up an **Ad Reque
 [5]: https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/README.md
 [6]: https://it.wikipedia.org/wiki/RANSAC
 [7]: https://github.com/robotology/find-superquadric
-[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/choose
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose
