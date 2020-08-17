@@ -87,10 +87,10 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 | <video width="720" height="405" controls> <source type="video/mp4" src="./assets/videos/shrug.mp4"> </video> |
 
 ## Outro
-Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo ✨
+Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
 
-Also, don't hesitate to **fork the sandbox** to build on top new interesting methods.
-And don't forget to let us know about your progress by [opening up an **Ad Request**][8] 👋🏻 
+Also, don't hesitate to [**fork the sandbox**][8] to build on top new interesting methods 🧪
+And don't forget to let us know about your progress by [opening up an **Ad Request**][9] 👋🏻 
 
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
@@ -103,4 +103,5 @@ And don't forget to let us know about your progress by [opening up an **Ad Reque
 [5]: https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/README.md
 [6]: https://it.wikipedia.org/wiki/RANSAC
 [7]: https://github.com/robotology/find-superquadric
-[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox
+[9]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose
