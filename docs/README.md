@@ -68,7 +68,7 @@ on the point clouds of the objects:
 In the figures above you should have also noticed the presence of blue and red arrows. Those arrows depict
 how effectively iCub will be performing side or top grasps from the indicated approaching directions.
 Blue and red arrows correspond to grasps executed with the right and the left hand, respectively:
-the longer and bigger is the arrow, the better the grasp is supposed to be.
+the bigger and more opaque is the arrow, the better the grasp is supposed to be.
 
 The grasp candidates are always anchored to the so-called **cardinal points** of the superquadric, which are
 those points located at the intersections between the principal axes of the superquadric and its surface.
