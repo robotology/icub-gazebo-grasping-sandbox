@@ -5,9 +5,12 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/icub)
 
-## ☁ Instructions to run the sandbox on the web
+## [📚 Documentation](https://robotology.github.io/icub-gazebo-grasping-sandbox)
 
+## ☁ Instructions to run the sandbox on the web
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
+
+Here's below a quick how-to guide; please, refer instead to [📚 Documentation](#-documentation) for a complete video tutorial 🎥
 
 1. To get started with the sandbox, click on the following badge:
 
@@ -20,8 +23,8 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
     $ cmake ../
     $ make install
     ```
-1. From within Gitpod, open up the browser at the port `6080`.
-1. Open a terminal and run the grasping experiment:
+1. From within Gitpod, open up the browser at the port `6080` to get to the workspace desktop GUI.
+1. In the desktop GUI, open a terminal and run the grasping experiment:
    ```sh
    $ icub-grasp.sh
    ```
@@ -31,8 +34,6 @@ We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find
 </p>
 
 ## [🔽 Instructions to run the sandbox locally](./dockerfiles)
-
-## [📚 Documentation](https://robotology.github.io/icub-gazebo-grasping-sandbox)
 
 ## 👨🏻‍💼 Maintainers
 This repository is maintained by:
