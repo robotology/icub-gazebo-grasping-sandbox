@@ -89,6 +89,9 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 ## Outro
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo ✨
 
+Also, don't hesitate to **fork the sandbox** to build on top new interesting methods.
+And don't forget to let us know about your progress by [opening up an **Ad Request**][8] 👋🏻 
+
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
 - B. S. Zapata-Impata, P. Gil, J. Pomares and F. Torres, "_Fast geometry-based computation of grasping points on three-dimensional point clouds_," 2019 International Journal of Advanced Robotic Systems, doi: [10.1177/1729881419831846][3].
@@ -100,3 +103,4 @@ Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in
 [5]: https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/README.md
 [6]: https://it.wikipedia.org/wiki/RANSAC
 [7]: https://github.com/robotology/find-superquadric
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/choose
