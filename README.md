@@ -11,7 +11,7 @@ This sandbox allows you to experiment with iCub performing basic object grasping
 ## ☁ Instructions to run the sandbox on the web
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
 
-Here's below a quick how-to guide; please, refer instead to [🚶🏻‍♂️ Walkthrough](#-walkthrough) for a complete video tutorial 🎥
+Here's below a quick how-to guide; please, refer instead to [🚶🏻‍♂️ Walkthrough](https://robotology.github.io/icub-gazebo-grasping-sandbox) for a complete video tutorial 🎥
 
 1. To get started with the sandbox, click on the following badge:
 
