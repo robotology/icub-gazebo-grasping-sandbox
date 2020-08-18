@@ -1,6 +1,6 @@
 
-📚 Documentation
-=================
+ℹ Documentation
+===============
 
 ## Quick video tutorial on how to run the sandbox in Gitpod 
 
