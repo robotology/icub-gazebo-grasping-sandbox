@@ -1,6 +1,6 @@
 
-ℹ Quick Guide
-=============
+🚶🏻‍♂️ Walkthrough
+================
 
 ## Video tutorial on how to run the sandbox in Gitpod
 
