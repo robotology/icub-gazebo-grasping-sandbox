@@ -1,8 +1,8 @@
 
-ℹ Documentation
-===============
+ℹ Quick Guide
+=============
 
-## Quick video tutorial on how to run the sandbox in Gitpod 
+## Video tutorial on how to run the sandbox in Gitpod
 
 | |
 | :---: |
