@@ -5,13 +5,13 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/icub)
 
-## [ℹ Documentation](https://robotology.github.io/icub-gazebo-grasping-sandbox)
+## [ℹ Quick Guide](https://robotology.github.io/icub-gazebo-grasping-sandbox)
 This sandbox allows you to experiment with iCub performing basic object grasping within the Gazebo simulator.
 
 ## ☁ Instructions to run the sandbox on the web
 We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
 
-Here's below a quick how-to guide; please, refer instead to [ℹ Documentation](#-documentation) for a complete video tutorial 🎥
+Here's below a quick how-to guide; please, refer instead to [ℹ Quick Guide](#-quick-guide) for a complete video tutorial 🎥
 
 1. To get started with the sandbox, click on the following badge:
 
