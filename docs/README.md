@@ -1,6 +1,6 @@
 
-📚 iCub Grasping in Gazebo
-==========================
+📚 Documentation
+=================
 
 ## Quick video tutorial on how to run the sandbox in Gitpod 
 
