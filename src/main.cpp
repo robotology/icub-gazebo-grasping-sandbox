@@ -452,7 +452,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         igaze->setTrackingMode(true);
         igaze->lookAtFixationPoint(sqCenter);
 
-        // set up the hand the pre-grasp configuration
+        // set up the hand pre-grasp configuration
         IControlLimits* ilim;
         hand_r.view(ilim);
         double pinkie_min, pinkie_max;
