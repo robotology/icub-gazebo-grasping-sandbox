@@ -81,37 +81,37 @@
     <connection>
         <from>/icub-grasp/world/eraser:o</from>
         <to>/world/model-eraser/model-name:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
         <from>/icub-grasp/mustard_bottle/mover:o</from>
         <to>/mustard_bottle/model-mover/delta-pose:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
         <from>/icub-grasp/pudding_box/mover:o</from>
         <to>/pudding_box/model-mover/delta-pose:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
         <from>/icubSim/cam/left/rgbImage:o</from>
         <to>/view/left</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
         <from>/icubSim/cam/left/rgbImage:o</from>
         <to>/icub-grasp/rgb:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
         <from>/icubSim/cam/left/depthImage:o</from>
         <to>/icub-grasp/depth:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>tcp</protocol>
     </connection>
 
     <connection>
