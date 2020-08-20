@@ -1,6 +1,6 @@
 title: iCub Grasping in Gazebo 🤖
 description: A public sandbox for simulating grasping in Gazebo with the iCub humanoid
-theme: jekyll-theme-cayman
+theme: jekyll-theme-hacker
 future: true
 
 gems:
