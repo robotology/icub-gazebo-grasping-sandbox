@@ -1,6 +1,5 @@
-
 🚶🏻‍♂️ Walkthrough
-================
+==============
 
 ## Video tutorial on how to run the sandbox in Gitpod
 
@@ -92,6 +91,8 @@ Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in
 Also, don't hesitate to [**fork the sandbox**][8] to build on top new interesting methods 🧪
 and don't forget to let us know about your progress by [opening up an **Ad Request**][9] 👋🏻 
 
+Here's a 📃 [**list of works**][10] ✨ that we know were built on the sandbox.
+
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
 - B. S. Zapata-Impata, P. Gil, J. Pomares and F. Torres, "_Fast geometry-based computation of grasping points on three-dimensional point clouds_," 2019 International Journal of Advanced Robotic Systems, doi: [10.1177/1729881419831846][3].
@@ -105,3 +106,4 @@ and don't forget to let us know about your progress by [opening up an **Ad Reque
 [7]: https://github.com/robotology/find-superquadric
 [8]: https://github.com/robotology/icub-gazebo-grasping-sandbox
 [9]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose
+[10]: ./building-on-sandbox.md
