@@ -24,7 +24,7 @@ RUN dos2unix /etc/X11/xorg.conf
 
 # Install python
 RUN apt install -y python3 python3-dev python3-pip python3-setuptools && \
-    ln -s /usr/bin/python3 /usr/bin/python
+    if [ ! -f "/usr/bin/python" ]; then ln -s /usr/bin/python3 /usr/bin/python; fi
     
 # Install magic-wormwhole to get things from one computer to another safely
 RUN apt install -y magic-wormhole
