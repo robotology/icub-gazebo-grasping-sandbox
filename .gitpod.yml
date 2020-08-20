@@ -8,6 +8,5 @@ workspaceLocation: "."
 tasks:
 - init: |
     init-icubcontrib.sh
-    echo "export GAZEBO_MODEL_PATH=\${GAZEBO_MODEL_PATH}:\${ICUBcontrib_DIR}/share/icub-gazebo-grasping-sandbox/models" >> ~/.bashrc
 - command: start-vnc-session.sh
 - command: gp await-port 6080 && gp preview $(gp url 6080)
