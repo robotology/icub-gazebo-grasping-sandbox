@@ -7,7 +7,7 @@ To include your method, just [drop us an **Ad Request**](https://github.com/robo
 
 | Topic | Author(s) | Description | Resources |
 | :---  | :---      | :---        | :---      |
-| S4HRI | [@pattacini](https://github.com/pattacini) | Applied grasping of a cube on top of a setting specifically designed in the context of a reaching experiment | <a href="https://github.com/cht-iit/design-setup-bp/issues/23">cht-iit/design-setup-bp/issues/23</a> |
+| S4HRI | [@pattacini](https://github.com/pattacini) | Grasping of a cube applied on top of a setting designed in the context of a specific reaching experiment | <a href="https://github.com/cht-iit/design-setup-bp/issues/23">cht-iit/design-setup-bp/issues/23</a> |
 
 ---
 
