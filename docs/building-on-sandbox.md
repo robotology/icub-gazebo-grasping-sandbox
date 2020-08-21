@@ -1,7 +1,7 @@
 🏛 Building on the Sandbox
 ==========================
 
-Find below a list of complete or ongoing works that used the sandbox to build new interesting applications.
+Find below a list of complete or ongoing works that used the sandbox to build new interesting applications and experiments.
 
 To include your method, just [drop us an **Ad Request**](https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose) 👋🏻
 
