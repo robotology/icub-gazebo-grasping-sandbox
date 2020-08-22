@@ -5,17 +5,17 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/icub)
 
-## [🚶🏻‍♂️ Walkthrough](https://robotology.github.io/icub-gazebo-grasping-sandbox)
+## [🚶🏻‍♂️ Walkthrough][1]
 This sandbox allows you to experiment with iCub performing basic object grasping within the Gazebo simulator.
 
 ## ☁ Instructions to run the sandbox on the web
-We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][1].
+We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][2].
 
-Here's below a quick how-to guide; please, refer instead to the section [🚶🏻‍♂️ Walkthrough](https://robotology.github.io/icub-gazebo-grasping-sandbox) for a complete video tutorial 🎥
+Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂️ Walkthrough][1] for an extensive video tutorial 🎥
 
 1. To get started with the sandbox, click on the following badge:
 
-    [![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][2]
+    [![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][3]
 
 1. Once the sandbox workspace is ready, build and install the project:
     ```sh
@@ -39,6 +39,8 @@ Here's below a quick how-to guide; please, refer instead to the section [🚶�
 ## ℹ Manual installation
 If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
 
+## [📃 List of works built on the sandbox][4]
+
 ## 👨🏻‍💻 Maintainers
 This repository is maintained by:
 
@@ -52,5 +54,7 @@ Special thanks go to [xEnVrE](https://github.com/xEnVrE) for his help on simulat
 ### 🆕 Contributing
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
-[1]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
-[2]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
+[1]: https://robotology.github.io/icub-gazebo-grasping-sandbox
+[2]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
+[3]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
+[4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
