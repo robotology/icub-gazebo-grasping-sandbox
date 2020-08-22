@@ -3,3 +3,6 @@ contact_links:
   - name: iCub Community Forum
     url: https://spectrum.chat/icub
     about: For general discussions.
+  - name: Building on the Sandbox
+    url: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
+    about: List of works that we know were built on the sandbox.
