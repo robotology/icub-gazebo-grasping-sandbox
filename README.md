@@ -34,7 +34,7 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
     <img src="./assets/showcase.gif">
 </p>
 
-## [🔽 Instructions to run the sandbox locally](./dockerfiles)
+## [🔽 Instructions to run the sandbox locally](./dockerfiles/README.md)
 
 ## ℹ Manual installation
 If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
