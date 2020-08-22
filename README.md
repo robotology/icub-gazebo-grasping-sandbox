@@ -36,7 +36,10 @@ Here's below a quick how-to guide; please, refer instead to the section [🚶�
 
 ## [🔽 Instructions to run the sandbox locally](./dockerfiles)
 
-## 👨🏻‍💼 Maintainers
+## ℹ Manual installation
+If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
+
+## 👨🏻‍💻 Maintainers
 This repository is maintained by:
 
 | | |
