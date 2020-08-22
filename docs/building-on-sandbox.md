@@ -3,7 +3,7 @@
 
 Find below a list of complete or ongoing works that used the sandbox to build new interesting applications and experiments.
 
-To include your method, just [drop us an **Ad Request**](https://github.com/robotology/icub-gazebo-grasping-sandbox/issues/new/choose) 👋🏻
+To include your method, just [open up a PR to change the table](https://github.com/robotology/icub-gazebo-grasping-sandbox/edit/master/docs/building-on-sandbox.md) 👋🏻
 
 | Topic | Author(s) | Description | Resources |
 | :---  | :---      | :---        | :---      |
