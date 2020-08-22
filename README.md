@@ -41,7 +41,7 @@ If you want to install the sandbox manually to perform specific customization (e
 
 ## [📃 List of works built on the sandbox][4]
 
-## 👨🏻‍💻 Maintainers
+### 👨🏻‍💻 Maintainers
 This repository is maintained by:
 
 | | |
