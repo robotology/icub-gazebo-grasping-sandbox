@@ -39,6 +39,16 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
 ## ℹ Manual installation
 If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
 
+## 📚 Cite the sandbox
+In case you use this sandbox for your work, please quote it within any resulting publication by citing the paper containing the original idea:
+- P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, https://doi.org/10.1109/HUMANOIDS.2018.8625030.
+
+<details>
+<summary>Click to show other papers providing foundamental components used in the sandbox</summary>
+- U. Pattacini, F. Nori, L. Natale, G. Metta and G. Sandini, "_An experimental evaluation of a novel minimum-jerk cartesian controller for humanoid robots_," 2010 IEEE/RSJ International Conference on Intelligent Robots and Systems, Taipei, 2010, pp. 1668-1674, https://doi.org/10.1109/IROS.2010.5650851.
+- A. Roncone, U. Pattacini, G. Metta and L. Natale, "_A Cartesian 6-DoF Gaze Controller for Humanoid Robots_", Proceedings of Robotics: Science and Systems, Ann Arbor, MI, June 18-22, 2016, https://doi.org/10.15607/RSS.2016.XII.022.
+</details>
+
 ## [📃 List of works built on the sandbox][4]
 
 ### 👨🏻‍💻 Maintainers
