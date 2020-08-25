@@ -92,7 +92,7 @@ Also, don't hesitate to [**fork the sandbox**][8] to build on top new interestin
 and don't forget to let us know about your progress 📢 For this, take a look at the 📃
 [**list of works**][9] ✨ that we know were built on the sandbox.
 
-For your convenience, the releases of the sandbox codebase can be referenced using this DOI:
+For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
 
 [![DOI](https://zenodo.org/badge/283310078.svg)](https://zenodo.org/badge/latestdoi/283310078)
 
