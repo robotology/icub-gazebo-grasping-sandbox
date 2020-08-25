@@ -92,6 +92,10 @@ Also, don't hesitate to [**fork the sandbox**][8] to build on top new interestin
 and don't forget to let us know about your progress 📢 For this, take a look at the 📃
 [**list of works**][9] ✨ that we know were built on the sandbox.
 
+For your convenience, the releases of the sandbox codebase can be referenced using this DOI:
+
+[![DOI](https://zenodo.org/badge/283310078.svg)](https://zenodo.org/badge/latestdoi/283310078)
+
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
 - B. S. Zapata-Impata, P. Gil, J. Pomares and F. Torres, "_Fast geometry-based computation of grasping points on three-dimensional point clouds_," 2019 International Journal of Advanced Robotic Systems, doi: [10.1177/1729881419831846][3].
