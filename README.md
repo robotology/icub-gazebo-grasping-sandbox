@@ -41,7 +41,7 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
 If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
 
 ## 📚 Cite the sandbox
-In case you use this sandbox for your work, please quote it within any resulting publication by citing the paper containing the original idea:
+In case you use this sandbox for your work, please quote it within any resulting publication by citing the paper where you can find the original implementation of the grasping method:
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030](https://doi.org/10.1109/HUMANOIDS.2018.8625030).
 
 <details>
