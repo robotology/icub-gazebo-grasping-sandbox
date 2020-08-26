@@ -53,7 +53,7 @@ In case you use this sandbox for your work, please quote it within any resulting
 </ul>
 <b>Interoperability between iCub and Gazebo:</b>
 <ul>
-  <li>M. Hoffman E., S. Traversaro, A. Rocchi, M. Ferrati, A. Settimi, F. Romano, L. Natale, A. Bicchi, F. Nori and N. G. Tsagarakis "<i>Yarp Based Plugins for Gazebo Simulator</i>". In: Hodicky J. (eds) Modelling and Simulation for Autonomous Systems. MESAS 2014. Lecture Notes in Computer Science, vol 8906. Springer, Cham. pp 333-346, doi: <a href="https://doi.org/10.1007/978-3-319-13823-7_29">10.1007/978-3-319-13823-7_29</a>.
+  <li>M. Hoffman E., S. Traversaro, A. Rocchi, M. Ferrati, A. Settimi, F. Romano, L. Natale, A. Bicchi, F. Nori and N. G. Tsagarakis, "<i>Yarp Based Plugins for Gazebo Simulator</i>". In: Hodicky J. (eds) Modelling and Simulation for Autonomous Systems. MESAS 2014. Lecture Notes in Computer Science, vol 8906. Springer, Cham. pp 333-346, doi: <a href="https://doi.org/10.1007/978-3-319-13823-7_29">10.1007/978-3-319-13823-7_29</a>.
 </ul>
 </details>
 
