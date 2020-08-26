@@ -67,7 +67,8 @@ This repository is maintained by:
 | [<img src="https://github.com/pattacini.png" width="40">](https://github.com/pattacini) | [@pattacini](https://github.com/pattacini) |
 
 ### 🙏 Acknowledgements
-This sandbox was made possible thanks to [xEnVrE](https://github.com/xEnVrE) from [HSP][5] group at [IIT](https://iit.it) for his contributions to [`icub-models`][6] on simulating visuomanipulation tasks in Gazebo.
+- This sandbox was made possible thanks to [xEnVrE](https://github.com/xEnVrE) from [HSP][5] group at [IIT](https://iit.it) for his contributions to [`robotology/icub-models`][6] on simulating visuomanipulation tasks in Gazebo.
+- This sandbox was inspired by the simplified simulation environment available in [`shadow-robot/smart_grasping_sandbox`][7].
 
 ### 🆕 Contributing
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
@@ -78,3 +79,4 @@ Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 [4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
 [5]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
 [6]: https://github.com/robotology/icub-models
+[7]: https://github.com/shadow-robot/smart_grasping_sandbox
