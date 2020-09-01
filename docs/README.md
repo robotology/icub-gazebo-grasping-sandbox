@@ -5,7 +5,7 @@
 
 | |
 | :---: |
-| <video controls width="720" height="405" controls> <source type="video/mp4" src="./assets/videos/gitpod.mp4#t=00:00:01"> </video> |
+| <video controls width="720" height="405"> <source type="video/mp4" src="./assets/videos/gitpod.mp4#t=00:00:01"> </video> |
 
 ## Intro
 This sandbox aims to illustrate how iCub can perform grasping within the Gazebo simulation environment.
@@ -79,11 +79,11 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 
 | Examples of side and top grasps |
 | :---: |
-| <video controls autoplay loop width="720" height="405" controls> <source type="video/mp4" src="./assets/videos/collection.mp4"> </video> |
+| <video controls autoplay loop width="720" height="405"> <source type="video/mp4" src="./assets/videos/collection.mp4"> </video> |
 
 |  What happens if iCub does not find good candidates ❔ |
 | :---: |
-| <video controls width="720" height="405" controls> <source type="video/mp4" src="./assets/videos/shrug.mp4"> </video> |
+| <video controls width="720" height="405"> <source type="video/mp4" src="./assets/videos/shrug.mp4"> </video> |
 
 ## Outro
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
