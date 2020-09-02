@@ -2,13 +2,13 @@
 ==========================================
 
 To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
-1. Pull the docker image (⚠ you may need to [authenticate to GitHub Packages][1] beforehand):
+1. Pull the docker image:
     ```sh
-    $ docker pull docker.pkg.github.com/robotology/icub-gazebo-grasping-sandbox/gitpod:{tag}
+    $ docker pull ghcr.io/robotology/icub-gazebo-grasping-sandbox:{tag}
     ```
 1. Launch the container:
     ```sh
-    $ docker run -it --rm -p 6080:6080 --user gitpod docker.pkg.github.com/robotology/icub-gazebo-grasping-sandbox/gitpod:{tag}
+    $ docker run -it --rm -p 6080:6080 --user gitpod ghcr.io/robotology/icub-gazebo-grasping-sandbox:{tag}
     ```
 1. From within the container shell, launch the following scripts:
     ```sh
@@ -30,4 +30,3 @@ To run the sandbox locally using [Docker](https://www.docker.com), go through th
    ```
 1. Once done, from the container shell press **CTRL+D**.
 
-[1]: https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-docker-for-use-with-github-packages#authenticating-to-github-packages
