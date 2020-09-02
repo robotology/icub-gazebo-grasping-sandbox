@@ -1,5 +1,9 @@
 FROM ubuntu:latest
-LABEL maintainer="ugo.pattacini@iit.it"
+LABEL org.opencontainers.image.title="iCub Gazebo Grasping Sandbox"
+LABEL org.opencontainers.image.description="Infrastructure for running grasping experiments with the iCub humanoid in Gazebo"
+LABEL org.opencontainers.image.url="https://github.com/robotology/icub-gazebo-grasping-sandbox"
+LABEL org.opencontainers.image.source="https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/Dockerfile"
+LABEL org.opencontainers.image.authors="Ugo Pattacini <ugo.pattacini@iit.it>"
 
 # Non-interactive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
