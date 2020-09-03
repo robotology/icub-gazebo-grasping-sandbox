@@ -30,6 +30,10 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
    ```sh
    $ icub-grasp.sh
    ```
+1. If needed, you can clean up hanging resources by specifying the option `clean`:
+   ```sh
+   $ icub-grasp.sh clean
+   ```
 
 <p align="center">
     <img src="./assets/showcase.gif">
