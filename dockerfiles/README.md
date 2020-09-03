@@ -4,12 +4,11 @@
 To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
 1. Pull the docker image:
     ```sh
-    $ docker pull ghcr.io/robotology/icub-gazebo-grasping-sandbox:{tag}
+    $ docker pull ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest
     ```
-    Find out the latest tag at https://github.com/orgs/robotology/packages/container/icub-gazebo-grasping-sandbox/versions.
 1. Launch the container:
     ```sh
-    $ docker run -it --rm -p 6080:6080 --user gitpod ghcr.io/robotology/icub-gazebo-grasping-sandbox:{tag}
+    $ docker run -it --rm -p 6080:6080 --user gitpod ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest
     ```
 1. From within the container shell, launch the following scripts:
     ```sh
