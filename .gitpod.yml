@@ -6,7 +6,6 @@ ports:
   onOpen: ignore
 workspaceLocation: "."
 tasks:
-- init: |
-    init-icubcontrib.sh
+- init: init-icubcontrib.sh
 - command: start-vnc-session.sh
 - command: gp await-port 6080 && gp preview $(gp url 6080)
