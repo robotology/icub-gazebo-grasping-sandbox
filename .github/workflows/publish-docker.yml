@@ -1,0 +1,19 @@
+name: Publish Docker Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: robotology/icub-gazebo-grasping-sandbox
+        username: ${{ github.actor }}
+        password: ${{ secrets.PUBLISH_DOCKER_IMAGE_TOKEN_PATTACINI }}
+        workdir: dockerfiles
+        registry: ghcr.io
+        tags: "latest"
