@@ -88,8 +88,8 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 ## Outro
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
 
-Also, don't hesitate to [**fork the sandbox**][8] to build on top new interesting methods 🧪
-and don't forget to let us know about your progress 📢 For this, take a look at the 📃
+Also, don't hesitate to [**create a copy of the sandbox**][8] in your account to build on top new interesting
+methods 🧪 and don't forget to let us know about your progress 📢 For this, take a look at the 📃
 [**list of works**][9] ✨ that we know were built on the sandbox.
 
 For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
@@ -107,5 +107,5 @@ For your convenience, the latest release of the sandbox codebase can be referenc
 [5]: https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/README.md
 [6]: https://it.wikipedia.org/wiki/RANSAC
 [7]: https://github.com/robotology/find-superquadric
-[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/generate
 [9]: ./building-on-sandbox.md
