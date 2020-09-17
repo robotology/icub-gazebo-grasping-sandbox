@@ -92,7 +92,7 @@ Also, don't hesitate to [**create a copy of the sandbox**][8] in your account to
 Take a look at this bunch of [**ideas** 💡][9] to start with.
 
 Don't forget to let us know about your progress 📢
-For this, take a look at the 📃 [**list of works**][10] ✨ that we know were built on the sandbox.
+This is the 📃 [**list of works**][10] ✨ that we know were built on the sandbox.
 
 For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
 
