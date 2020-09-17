@@ -5,7 +5,7 @@
 #                                                                              #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(icub-gazebo-grasping-sandbox VERSION 1.0.0)
 
 find_package(YCM REQUIRED)
