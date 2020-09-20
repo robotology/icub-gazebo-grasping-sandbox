@@ -20,7 +20,7 @@
 namespace gazebo {
 
 /******************************************************************************/
-class ModelMover : public ModelPlugin
+class ModelMover : public gazebo::ModelPlugin
 {
     gazebo::physics::ModelPtr model;
     gazebo::event::ConnectionPtr renderer_connection;

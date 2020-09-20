@@ -19,7 +19,7 @@
 namespace gazebo {
 
 /******************************************************************************/
-class ModelEraser : public WorldPlugin
+class ModelEraser : public gazebo::WorldPlugin
 {
     gazebo::physics::WorldPtr world;
     gazebo::event::ConnectionPtr renderer_connection;
