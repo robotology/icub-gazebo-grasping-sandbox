@@ -28,12 +28,6 @@ There are two objects located on the table in front of iCub, which are taken fro
 The objective is to let iCub grasp them one at time. Therefore, one of the two objects is randomly
 selected and presented to the robot.
 
-The second object gets simply removed from the simulated world in order to spare computations from the
-standpoint of the physics engine. In fact, as it turns out evident while running the sandbox, Gazebo is
-pretty demanding so that the resources made available from within the Gitpod workspace are not sufficient
-to let the simulation flow smoothly. You may consider getting around these limitations by [running the
-sandbox locally on your PC][5].
-
 A couple of considerations:
 - The two YCB objects have been identified to own the suitable geometric properties that elicit side and top grasps separately.
 - For the sake of simplicity and clarity, the code has been designed such that the pipeline can run only in **one-shot mode**,
@@ -50,9 +44,9 @@ A couple of considerations:
 
 ### 2. Scene segmentation and superquadric fitting
 The 3D point cloud of the scene acquired from the iCub cameras is processed in order to segment out the
-object from the table using a naive [**RANSAC**][6]. The resulting partial point cloud of the object is used
+object from the table using a naive [**RANSAC**][5]. The resulting partial point cloud of the object is used
 to construct a compact **3D representation based on superquadrics** by recruiting a nonlinear fitting.
-This operation is performed by the external module [**`find-superquadric`**][7]. In particular, the
+This operation is performed by the external module [**`find-superquadric`**][6]. In particular, the
 superquadric allows us to get a good guess of how the shape of the object may be completed in the hidden
 area, clearly leveraging on the hypothesis of symmetry.
 
@@ -88,11 +82,11 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 ## Outro
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
 
-Also, don't hesitate to [**create a copy of the sandbox**][8] in your account to build on top new interesting methods 🧪
-Take a look at this bunch of [**ideas** 💡][9] to start with.
+Also, don't hesitate to [**create a copy of the sandbox**][7] in your account to build on top new interesting methods 🧪
+Take a look at this bunch of [**ideas** 💡][8] to start with.
 
 Don't forget to let us know about your progress 📢
-This is the 📃 [**list of works**][10] ✨ that we know were built on the sandbox.
+This is the 📃 [**list of works**][9] ✨ that we know were built on the sandbox.
 
 For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
 
@@ -106,9 +100,8 @@ For your convenience, the latest release of the sandbox codebase can be referenc
 [2]: https://doi.org/10.1109/HUMANOIDS.2018.8625030
 [3]: https://doi.org/10.1177/1729881419831846
 [4]: https://www.ycbbenchmarks.com/object-models
-[5]: https://github.com/robotology/icub-gazebo-grasping-sandbox/blob/master/dockerfiles/README.md
-[6]: https://it.wikipedia.org/wiki/RANSAC
-[7]: https://github.com/robotology/find-superquadric
-[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/generate
-[9]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%92%A1+idea%22
-[10]: ./building-on-sandbox.md
+[5]: https://it.wikipedia.org/wiki/RANSAC
+[6]: https://github.com/robotology/find-superquadric
+[7]: https://github.com/robotology/icub-gazebo-grasping-sandbox/generate
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%92%A1+idea%22
+[9]: ./building-on-sandbox.md

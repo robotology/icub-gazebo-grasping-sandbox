@@ -56,7 +56,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
     PolyDriver hand_r,hand_l;
     PolyDriver gaze;
 
-    BufferedPort<Bottle> worldPort;
     vector<pair<string, shared_ptr<BufferedPort<Bottle>>>> objMoverPorts;
 
     RpcServer rpcPort;
@@ -221,7 +220,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
             }
         }
 
-        worldPort.open("/"+name+"/world/eraser:o");
         vector<string> objects_names{"mustard_bottle", "pudding_box"};
         for (const auto& object_name:objects_names) {
             objMoverPorts.push_back(make_pair(object_name, shared_ptr<BufferedPort<Bottle>>(new BufferedPort<Bottle>())));
@@ -277,19 +275,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
             delta_pose.addDouble(dist_rot(mersenne_engine) * (M_PI / 180.));
             port->prepare() = delta_pose;
             port->writeStrict();
-
-            if (worldPort.getOutputCount() > 0) {
-                for (auto p:objMoverPorts) {
-                    if (p.second != port) {
-                        Bottle disable_object;
-                        disable_object.addString(p.first);
-                        worldPort.prepare() = disable_object;
-                        worldPort.writeStrict();
-                    }
-                }
-            } else {
-                return false;
-            }
 
             return true;
         }
@@ -593,7 +578,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
         for (auto port:objMoverPorts) {
             port.second->close();
         }
-        worldPort.close();
         gaze.close();
         arm_r.close();
         arm_l.close();
