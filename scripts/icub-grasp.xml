@@ -5,6 +5,17 @@
     </dependencies>
 
     <module>
+        <name>gzserver</name>
+        <parameters>-e dart icub-gazebo-grasping-sandbox.sdf</parameters>
+        <node>localhost</node>
+    </module>
+
+    <module>
+        <name>gzclient</name>
+        <node>localhost</node>
+    </module>
+
+    <module>
         <name>yarprobotinterface</name>
         <parameters>--context gazeboCartesianControl --config no_legs.xml</parameters>
         <dependencies>
@@ -55,6 +66,9 @@
     <module>
         <name>yarpview</name>
         <parameters>--name /view/left --compact --p 10 --x 20 --y 20</parameters>
+        <dependencies>
+            <port timeout="20">/icub-grasp/rpc</port>
+        </dependencies>
         <node>localhost</node>
     </module>
 
@@ -62,7 +76,7 @@
         <name>find-superquadric</name>
         <parameters>--remove-outliers "(0.01 10)" --random-sample 0.2 --disable-viewer</parameters>
         <dependencies>
-            <port timeout="20">/view/left</port>
+            <port timeout="20">/icub-grasp/rpc</port>
         </dependencies>
         <node>localhost</node>
     </module>
