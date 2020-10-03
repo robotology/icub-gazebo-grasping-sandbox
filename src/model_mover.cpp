@@ -5,14 +5,13 @@
  *                                                                            *
  ******************************************************************************/
 
+#include <functional>
 #include <cmath>
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/common/Events.hh>
 #include <ignition/math/Pose3.hh>
-
-#include <boost/bind.hpp>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
@@ -43,10 +42,10 @@ class ModelMover : public gazebo::ModelPlugin
 
 public:
     /**************************************************************************/
-    void Load(gazebo::physics::ModelPtr model, sdf::ElementPtr) {
+    void Load(gazebo::physics::ModelPtr model, sdf::ElementPtr) override {
         this->model = model;
         port.open("/" + model->GetName() + "/model-mover/delta-pose:i");
-        auto bind = boost::bind(&ModelMover::onWorldFrame, this);
+        auto bind = std::bind(&ModelMover::onWorldFrame, this);
         renderer_connection = gazebo::event::Events::ConnectWorldUpdateBegin(bind);
     }
 
