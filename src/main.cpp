@@ -221,7 +221,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         vector<string> objects_names{"mustard_bottle", "pudding_box"};
         for (const auto& object_name:objects_names) {
-            objMoverPorts.push_back(make_pair(object_name, shared_ptr<BufferedPort<Bottle>>(new BufferedPort<Bottle>())));
+            objMoverPorts.push_back(make_pair(object_name, make_shared<BufferedPort<Bottle>>()));
             objMoverPorts.back().second->open("/"+name+"/"+object_name+"/mover:o");
         }
 
@@ -231,7 +231,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         rpcPort.open("/"+name+"/rpc");
         attach(rpcPort);
 
-        viewer = unique_ptr<Viewer>(new Viewer(10, 370, 350, 350));
+        viewer = make_unique<Viewer>(10, 370, 350, 350);
         viewer->start();
 
         return true;
@@ -341,7 +341,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto view_angle = 2. * std::atan((w / 2.) / fov_h) * (180. / M_PI);
 
         // aggregate image data in the point cloud of the whole scene
-        pc_scene = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
+        pc_scene = make_shared<yarp::sig::PointCloud<DataXYZRGBA>>();
         Vector x{0., 0., 0., 1.};
         for (int v = 0; v < h; v++) {
             for (int u = 0; u < w; u++) {
@@ -370,8 +370,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         //savePCL("/workspace/pc_scene.off", pc_scene);
 
         // segment out the table and the object
-        pc_table = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
-        pc_object = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
+        pc_table = make_shared<yarp::sig::PointCloud<DataXYZRGBA>>();
+        pc_object = make_shared<yarp::sig::PointCloud<DataXYZRGBA>>();
         table_height = Segmentation::RANSAC(pc_scene, pc_table, pc_object);
         if (isnan(table_height)) {
             yError() << "Segmentation failed!";
