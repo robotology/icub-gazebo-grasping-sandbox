@@ -69,7 +69,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
     shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>> pc_object{nullptr};
 
     Matrix Teye;
-    double view_angle{50.};
     double table_height{numeric_limits<double>::quiet_NaN()};
     Bottle sqParams;
     
@@ -309,17 +308,9 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
     /**************************************************************************/
     bool segment() override {
-        // get camera extrinsic matrix
-        IGazeControl* igaze;
-        gaze.view(igaze);
-        Vector cam_x, cam_o;
-        igaze->getLeftEyePose(cam_x, cam_o);
-        Teye = axis2dcm(cam_o);
-        Teye.setSubcol(cam_x, 0, 3);
-
         // get image data
-        ImageOf<PixelRgb>* rgbImage = rgbPort.read();
-        ImageOf<PixelFloat>* depthImage = depthPort.read();
+        auto* rgbImage = rgbPort.read();
+        auto* depthImage = depthPort.read();
 
         if ((rgbImage == nullptr) || (depthImage == nullptr)) {
             yError() << "Unable to receive image data!";
@@ -335,9 +326,22 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto w = rgbImage->width();
         const auto h = rgbImage->height();
 
+        // get camera extrinsics
+        IGazeControl* igaze;
+        gaze.view(igaze);
+        Vector cam_x, cam_o;
+        igaze->getLeftEyePose(cam_x, cam_o);
+        Teye = axis2dcm(cam_o);
+        Teye.setSubcol(cam_x, 0, 3);
+
+        // get camera intrinsics
+        Bottle info;
+        igaze->getInfo(info);
+        const auto fov_h = info.find("camera_intrinsics_left").asList()->get(0).asDouble();
+        const auto view_angle = 2. * std::atan((w / 2.) / fov_h) * (180. / M_PI);
+
         // aggregate image data in the point cloud of the whole scene
         pc_scene = shared_ptr<yarp::sig::PointCloud<DataXYZRGBA>>(new yarp::sig::PointCloud<DataXYZRGBA>);
-        const auto fov_h = (w / 2.) / tan((view_angle / 2.) * (M_PI / 180.));
         Vector x{0., 0., 0., 1.};
         for (int v = 0; v < h; v++) {
             for (int u = 0; u < w; u++) {
