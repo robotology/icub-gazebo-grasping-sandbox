@@ -7,7 +7,8 @@ To include your method, just [open up a PR to change the table](https://github.c
 
 | Topic | Author(s) | Description | Resources |
 | :---  | :---      | :---        | :---      |
-| S4HRI | [@pattacini](https://github.com/pattacini) | Grasping of a cube applied on top of a setting designed in the context of a specific reaching experiment | <a href="https://github.com/cht-iit/design-setup-bp/issues/23">cht-iit/design-setup-bp/issues/23</a> |
+| S4HRI | [@pattacini](https://github.com/pattacini) | Grasping of a cube applied on top of a setting designed in the context of a specific reaching experiment | [cht-iit/design-setup-bp/issues/23](https://github.com/cht-iit/design-setup-bp/issues/23) |
+| HW Design | [@vtikha](https://github.com/vtikha) [@vvasco](https://github.com/vvasco) | Design the Realsense holder for the iCub robot | [icub-tech-iit/design-holder-realsense](https://github.com/icub-tech-iit/design-holder-realsense) |
 
 ---
 
