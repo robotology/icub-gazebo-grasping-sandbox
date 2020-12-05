@@ -107,19 +107,19 @@
     <connection>
         <from>/icubSim/cam/left/rgbImage:o</from>
         <to>/view/left</to>
-        <protocol>unix_stream</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
 
     <connection>
         <from>/icubSim/cam/left/rgbImage:o</from>
         <to>/icub-grasp/rgb:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
 
     <connection>
         <from>/icubSim/cam/left/depthImage:o</from>
         <to>/icub-grasp/depth:i</to>
-        <protocol>unix_stream</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
 
     <connection>
