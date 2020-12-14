@@ -4,7 +4,7 @@ contact_links:
     url: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
     about: List of works that we know were built on the sandbox.
   - name: Discussions and Q&A
-    url: https://robotology.github.io/icub-gazebo-grasping-sandbox/discussions
+    url: https://github/robotology/icub-gazebo-grasping-sandbox/discussions
     about: Post questions and discuss ideas on how to design your own solution building on this sandbox.
   - name: Robotology Community
     url: https://github.com/robotology/QA/discussions
