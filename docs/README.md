@@ -103,5 +103,5 @@ For your convenience, the latest release of the sandbox codebase can be referenc
 [5]: https://it.wikipedia.org/wiki/RANSAC
 [6]: https://github.com/robotology/find-superquadric
 [7]: https://github.com/robotology/icub-gazebo-grasping-sandbox/generate
-[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/issues?q=is%3Aopen+is%3Aissue+label%3A%22%F0%9F%92%A1+idea%22
+[8]: https://github.com/robotology/icub-gazebo-grasping-sandbox/discussions?discussions_q=category%3AIdeas
 [9]: ./building-on-sandbox.md
