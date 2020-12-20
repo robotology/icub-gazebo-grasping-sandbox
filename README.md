@@ -81,7 +81,7 @@ This repository is maintained by:
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
 [1]: https://robotology.github.io/icub-gazebo-grasping-sandbox
-[2]: https://spectrum.chat/icub/technicalities/yarp-enabled-gitpod-workspaces-available~73ab5ee9-830e-4b7f-9e99-195295bb5e34
+[2]: https://github.com/robotology/QA/discussions/459
 [3]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
 [4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
 [5]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
