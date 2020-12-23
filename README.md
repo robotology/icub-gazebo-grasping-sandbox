@@ -4,7 +4,7 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 
 [![DOI](https://zenodo.org/badge/283310078.svg)](https://zenodo.org/badge/latestdoi/283310078)
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
-[![Community](https://img.shields.io/badge/Join-Robotology_Community-blue?style=plastic&logo=github)](https://github.com/robotology/QA/discussions)
+[![Community](https://img.shields.io/badge/Join-Robotology_Community-blue?style=plastic&logo=github)](https://github.com/robotology/community/discussions)
 
 ## [🚶🏻‍♂️ Walkthrough][1]
 This sandbox allows you to experiment with iCub performing basic object grasping within the Gazebo simulator.
@@ -81,7 +81,7 @@ This repository is maintained by:
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
 [1]: https://robotology.github.io/icub-gazebo-grasping-sandbox
-[2]: https://github.com/robotology/QA/discussions/459
+[2]: https://github.com/robotology/community/discussions/459
 [3]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
 [4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
 [5]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
