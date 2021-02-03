@@ -74,7 +74,9 @@ RUN git clone https://github.com/robotology/ycm.git --depth 1 && \
 RUN git clone https://github.com/robotology/yarp.git --depth 1 && \
     cp ./yarp/data/bash-completion/yarp /etc/bash_completion.d && \
     cd yarp && mkdir build && cd build && \
-    cmake .. && make install && \
+    cmake .. \
+    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
+    make install && \
     cd ../.. && rm -Rf yarp
 
 # Build icub-main
