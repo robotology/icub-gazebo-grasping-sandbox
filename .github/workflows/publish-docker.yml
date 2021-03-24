@@ -13,7 +13,7 @@ jobs:
       with:
         name: robotology/icub-gazebo-grasping-sandbox
         username: ${{ github.actor }}
-        password: ${{ secrets.PUBLISH_DOCKER_IMAGE_TOKEN_PATTACINI }}
+        password: ${{ secrets.GITHUB_TOKEN }}
         workdir: dockerfiles
         registry: ghcr.io
         tags: "latest"
