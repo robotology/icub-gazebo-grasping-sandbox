@@ -378,7 +378,7 @@ public:
             } else {
                 vtk_actor->GetProperty()->SetColor(1., 0., 0.);
             }
-            vtk_actor->GetProperty()->SetOpacity(c == candidates.front() ? .8 : .25);
+            vtk_actor->GetProperty()->SetOpacity(c == candidates.front() ? 1. : .25);
 
             vtkSmartPointer<vtkTransform> vtk_transform = vtkSmartPointer<vtkTransform>::New();
             vtk_transform->Translate(T.getCol(3).subVector(0, 2).data());
