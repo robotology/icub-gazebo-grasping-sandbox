@@ -14,7 +14,7 @@ RUN apt update
 RUN apt install -y apt-utils software-properties-common apt-transport-https sudo \
     psmisc lsb-release tmux nano wget curl telnet gnupg build-essential gdb git gitk \
     cmake cmake-curses-gui libedit-dev libxml2-dev autoconf locales gdebi terminator meld \
-    dos2unix meshlab
+    dos2unix bash-completion meshlab
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
@@ -72,7 +72,6 @@ RUN git clone https://github.com/robotology/ycm.git --depth 1 && \
 
 # Build yarp
 RUN git clone https://github.com/robotology/yarp.git --depth 1 && \
-    cp ./yarp/data/bash-completion/yarp /etc/bash_completion.d && \
     cd yarp && mkdir build && cd build && \
     cmake .. \
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
@@ -133,7 +132,8 @@ RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prom
 
 # Set up .bashrc
 WORKDIR /home/gitpod
-RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
+RUN echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc && \
+    echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
     echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc && \
     echo "export GAZEBO_RESOURCE_PATH=\${GAZEBO_RESOURCE_PATH}:\${ICUBcontrib_DIR}/share/gazebo/worlds" >> ~/.bashrc && \
