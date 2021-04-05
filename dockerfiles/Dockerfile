@@ -132,8 +132,7 @@ RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prom
 
 # Set up .bashrc
 WORKDIR /home/gitpod
-RUN echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc && \
-    echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
+RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
     echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc && \
     echo "export GAZEBO_RESOURCE_PATH=\${GAZEBO_RESOURCE_PATH}:\${ICUBcontrib_DIR}/share/gazebo/worlds" >> ~/.bashrc && \
