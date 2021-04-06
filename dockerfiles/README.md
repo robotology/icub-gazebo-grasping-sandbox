@@ -1,7 +1,7 @@
 🔽 Instructions to run the sandbox locally
 ==========================================
 
-To run the sandbox locally using [Docker](https://www.docker.com), go through the following steps:
+To run the sandbox locally using [Docker](https://docs.docker.com/get-docker), go through the following steps:
 1. Pull the docker image:
     ```sh
     $ docker pull ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest
