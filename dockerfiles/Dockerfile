@@ -147,15 +147,13 @@ USER root
 
 # Set up script to prepare /workspace/iCubContrib
 COPY init-icubcontrib.sh /usr/bin/init-icubcontrib.sh
-COPY init-icubcontrib-local.sh /usr/bin/init-icubcontrib-local.sh
-RUN chmod +x /usr/bin/init-icubcontrib.sh /usr/bin/init-icubcontrib-local.sh && \
-    dos2unix /usr/bin/init-icubcontrib.sh /usr/bin/init-icubcontrib-local.sh
+RUN chmod +x /usr/bin/init-icubcontrib.sh && \
+    dos2unix /usr/bin/init-icubcontrib.sh
 
 # Set up script to launch graphics and vnc
 COPY start-vnc-session.sh /usr/bin/start-vnc-session.sh
-COPY start-vnc-session-local.sh /usr/bin/start-vnc-session-local.sh
-RUN chmod +x /usr/bin/start-vnc-session.sh /usr/bin/start-vnc-session-local.sh && \
-    dos2unix /usr/bin/start-vnc-session.sh /usr/bin/start-vnc-session-local.sh
+RUN chmod +x /usr/bin/start-vnc-session.sh && \
+    dos2unix /usr/bin/start-vnc-session.sh
 
 # Manage x11vnc port
 EXPOSE 5901
