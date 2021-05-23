@@ -7,9 +7,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@main
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@main
       with:
         name: robotology/icub-gazebo-grasping-sandbox
         username: ${{ github.actor }}
