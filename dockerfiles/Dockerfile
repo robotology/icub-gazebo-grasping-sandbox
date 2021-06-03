@@ -52,6 +52,7 @@ RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb
 # Select options
 ARG ROBOTOLOGY_SUPERBUILD_RELEASE
 ARG BUILD_TYPE
+ARG ROBOTOLOGY_SUPERBUILD_INSTALL_DIR=/usr/local
 
 # Set up git (required by superbuild)
 RUN git config --global user.name "GitHub Actions" && \
@@ -71,7 +72,7 @@ RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 
     cd robotology-superbuild && mkdir build && cd build && \
     cmake .. \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          -DYCM_EP_INSTALL_DIR=/usr/local \
+          -DYCM_EP_INSTALL_DIR=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} \
           -DROBOTOLOGY_ENABLE_CORE:BOOL=ON \
           -DROBOTOLOGY_USES_GAZEBO:BOOL=ON && \
     make && \
@@ -81,7 +82,9 @@ RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 
 RUN git clone https://github.com/robotology/find-superquadric.git --depth 1 && \
     cd find-superquadric && mkdir build && cd build && \
     cmake .. \
-    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} && \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+    -DCMAKE_PREFIX_PATH=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} \
+    -DCMAKE_INSTALL_PREFIX=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} && \
     make install && \
     cd ../.. && rm -Rf find-superquadric
 
@@ -107,7 +110,7 @@ RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prom
 WORKDIR /home/gitpod
 RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
-    echo "source /usr/local/share/robotology-superbuild/setup.sh" >>  ~/.bashrc
+    echo "source ${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}/share/robotology-superbuild/setup.sh" >>  ~/.bashrc
 
 # Create the Desktop dir
 RUN mkdir -p /home/gitpod/Desktop

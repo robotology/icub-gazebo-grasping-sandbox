@@ -20,7 +20,7 @@ To run the sandbox locally using [Docker](https://docs.docker.com/get-docker), g
     $ cd /workspace/icub-gazebo-grasping-sandbox 
     $ mkdir build && cd build
     $ cmake ../
-    $ make install
+    $ sudo make install
     ```
 1. Open up the browser and connect to **`localhost:6080`** to get to the workspace desktop GUI.
 1. In the desktop GUI, open a terminal and run the grasping experiment:
