@@ -50,74 +50,47 @@ RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb
     gazebo11 libgazebo11-dev
     
 # Select options
-ARG BRANCH=devel
-ARG BUILD_TYPE=Release
+ARG ROBOTOLOGY_SUPERBUILD_RELEASE
+ARG BUILD_TYPE
+
+# Set up git (required by superbuild)
+RUN git config --global user.name "GitHub Actions" && \
+    git config --global user.email "actions@github.com"
 
 # Install VTK
 RUN git clone https://github.com/Kitware/VTK.git --depth 1 --branch v9.0.1 && \
     cd VTK && mkdir build && cd build && \
     cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DBUILD_TESTING=OFF && \
     make install && \
     cd ../.. && rm -Rf VTK
 
-# Build ycm
-RUN git clone https://github.com/robotology/ycm.git --depth 1 && \
-    cd ycm && mkdir build && cd build && \
+# Build robotology-superbuild
+RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 --branch ${ROBOTOLOGY_SUPERBUILD_RELEASE} && \
+    cd robotology-superbuild && mkdir build && cd build && \
     cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
-    make install && \
-    cd ../.. && rm -Rf ycm
-
-# Build yarp
-RUN git clone https://github.com/robotology/yarp.git --depth 1 && \
-    cd yarp && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
-    make install && \
-    cd ../.. && rm -Rf yarp
-
-# Build icub-main
-RUN git clone https://github.com/robotology/icub-main.git --depth 1 --branch $BRANCH && \
-    cd icub-main && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-    -DENABLE_icubmod_cartesiancontrollerserver=ON \
-    -DENABLE_icubmod_cartesiancontrollerclient=ON \
-    -DENABLE_icubmod_gazecontrollerclient=ON && \
-    make install && \
-    cd ../.. && rm -Rf icub-main
-
-# Build gazebo-yarp-plugins
-RUN git clone https://github.com/robotology/gazebo-yarp-plugins.git --depth 1 --branch $BRANCH && \
-    cd gazebo-yarp-plugins && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
-    make install && \
-    cd ../.. && rm -Rf gazebo-yarp-plugins
-
-# Clone icub-models
-RUN git clone https://github.com/robotology/icub-models.git --depth 1 --branch $BRANCH && \
-    cd icub-models && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
-    make install && \
-    cd ../.. && rm -Rf icub-models
+          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DYCM_EP_INSTALL_DIR=/usr/local \
+          -DROBOTOLOGY_ENABLE_CORE:BOOL=ON \
+          -DROBOTOLOGY_USES_GAZEBO:BOOL=ON && \
+    make && \
+    cd ../.. && rm -Rf robotology-superbuild
 
 # Build find-superquadric
 RUN git clone https://github.com/robotology/find-superquadric.git --depth 1 && \
     cd find-superquadric && mkdir build && cd build && \
     cmake .. \
-    -DCMAKE_BUILD_TYPE=$BUILD_TYPE && \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} && \
     make install && \
     cd ../.. && rm -Rf find-superquadric
 
+# Clean up git configuration
+RUN git config --global --unset-all user.name && \
+    git config --global --unset-all user.email
+
 # Set environmental variables
 ENV DISPLAY=:1
-ENV ICUBcontrib_DIR=/workspace/iCubContrib
-ENV YARP_DATA_DIRS=/usr/local/share/yarp:/usr/local/share/iCub:${ICUBcontrib_DIR}/share/ICUBcontrib
-ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/yarp:${ICUBcontrib_DIR}/lib
 
 # Create user gitpod
 RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod && \
@@ -134,10 +107,7 @@ RUN git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prom
 WORKDIR /home/gitpod
 RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
-    echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc && \
-    echo "export GAZEBO_RESOURCE_PATH=\${GAZEBO_RESOURCE_PATH}:\${ICUBcontrib_DIR}/share/gazebo/worlds" >> ~/.bashrc && \
-    echo "export GAZEBO_MODEL_PATH=\${GAZEBO_MODEL_PATH}:/usr/local/share:/usr/local/share/iCub/robots:\${ICUBcontrib_DIR}/share/gazebo/models" >> ~/.bashrc && \
-    echo "export PATH=\${PATH}:\${ICUBcontrib_DIR}/bin" >> ~/.bashrc
+    echo "source /usr/local/share/robotology-superbuild/setup.sh" >>  ~/.bashrc
 
 # Create the Desktop dir
 RUN mkdir -p /home/gitpod/Desktop
@@ -145,24 +115,13 @@ RUN mkdir -p /home/gitpod/Desktop
 # Switch back to root
 USER root
 
-# Set up script to prepare /workspace/iCubContrib
-COPY init-icubcontrib.sh /usr/bin/init-icubcontrib.sh
-RUN chmod +x /usr/bin/init-icubcontrib.sh && \
-    dos2unix /usr/bin/init-icubcontrib.sh
-
 # Set up script to launch graphics and vnc
 COPY start-vnc-session.sh /usr/bin/start-vnc-session.sh
 RUN chmod +x /usr/bin/start-vnc-session.sh && \
     dos2unix /usr/bin/start-vnc-session.sh
 
-# Manage x11vnc port
-EXPOSE 5901
-
-# Manage noVNC port
-EXPOSE 6080
-
-# Manage yarp port
-EXPOSE 10000/tcp 10000/udp
+# Manage ports
+EXPOSE 5901 6080 10000/tcp 10000/udp
 
 # Clean up unnecessary installation products
 RUN rm -Rf /var/lib/apt/lists/*

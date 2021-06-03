@@ -12,7 +12,6 @@ To run the sandbox locally using [Docker](https://docs.docker.com/get-docker), g
     ```
 1. From within the container shell, launch the following scripts:
     ```sh
-    $ init-icubcontrib.sh
     $ start-vnc-session.sh
     ```
 1. Clone and install the project:
