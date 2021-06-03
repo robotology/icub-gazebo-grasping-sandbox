@@ -1,4 +1,4 @@
-image: ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest
+image: ghcr.io/robotology/icub-gazebo-grasping-sandbox:v2021.05
 ports:
 - port: 6080
   onOpen: notify
@@ -6,6 +6,5 @@ ports:
   onOpen: ignore
 workspaceLocation: "."
 tasks:
-- init: init-icubcontrib.sh
 - command: start-vnc-session.sh
 - command: gp await-port 6080 && gp preview $(gp url 6080)
