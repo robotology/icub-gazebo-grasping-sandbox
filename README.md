@@ -19,20 +19,20 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
     [![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][3]
 
 1. Once the sandbox workspace is ready, build and install the project:
-    ```sh
-    $ cd /workspace/icub-gazebo-grasping-sandbox 
-    $ mkdir build && cd build
-    $ cmake ../
-    $ sudo make install
+    ```console
+    cd /workspace/icub-gazebo-grasping-sandbox 
+    mkdir build && cd build
+    cmake ../
+    sudo make install
     ```
 1. From within Gitpod, open up the browser at the port `6080` to get to the workspace desktop GUI.
 1. In the desktop GUI, open a terminal and run the grasping experiment:
-   ```sh
-   $ icub-grasp.sh
+   ```console
+   icub-grasp.sh
    ```
 1. If needed, you can clean up hanging resources by specifying the option `clean`:
-   ```sh
-   $ icub-grasp.sh clean
+   ```console
+   icub-grasp.sh clean
    ```
 
 <div align="center">
