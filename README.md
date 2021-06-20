@@ -82,7 +82,7 @@ Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
 [1]: https://robotology.github.io/icub-gazebo-grasping-sandbox
 [2]: https://github.com/robotology/community/discussions/459
-[3]: https://gitpod.io/#https://github.com/robotology/icub-gazebo-grasping-sandbox
+[3]: https://gitpod.io/from-referrer
 [4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
 [5]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
 [6]: https://github.com/robotology/icub-models
