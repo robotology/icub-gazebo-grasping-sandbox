@@ -16,8 +16,8 @@ To run the sandbox locally using [Docker](https://docs.docker.com/get-docker), g
     ```
 1. Clone and install the project:
     ```console
-    git clone https://github.com/robotology/icub-gazebo-grasping-sandbox.git /workspace/icub-gazebo-grasping-sandbox
-    cd /workspace/icub-gazebo-grasping-sandbox 
+    git clone https://github.com/robotology/icub-gazebo-grasping-sandbox.git
+    cd icub-gazebo-grasping-sandbox
     mkdir build && cd build
     cmake ../
     sudo make install
