@@ -21,6 +21,7 @@ RUN locale-gen en_US.UTF-8
 
 # Install graphics
 RUN apt install -y xfce4 xfce4-goodies xserver-xorg-video-dummy xserver-xorg-legacy x11vnc firefox && \
+    apt remove -y xfce4-power-manager light-locker && \
     sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
 COPY xorg.conf /etc/X11/xorg.conf
 RUN dos2unix /etc/X11/xorg.conf
