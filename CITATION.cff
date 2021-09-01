@@ -18,6 +18,6 @@ authors:
   orcid: "https://orcid.org/0000-0001-6142-5545"
 title: "icub-gazebo-grasping-sandbox"
 version: 2.0.1
-doi: 10.5281/zenodo.4898856
-date-released: 2021-07-29
+doi: 10.5281/zenodo.5356853
+date-released: 2021-09-01
 url: "https://github.com/robotology/icub-gazebo-grasping-sandbox"
