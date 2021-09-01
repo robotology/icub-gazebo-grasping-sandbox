@@ -17,7 +17,7 @@ authors:
   given-names: "Marco"
   orcid: "https://orcid.org/0000-0001-6142-5545"
 title: "icub-gazebo-grasping-sandbox"
-version: 2.0.1
+version: v2.0.2
 doi: 10.5281/zenodo.3999468
 date-released: 2021-09-01
 url: "https://github.com/robotology/icub-gazebo-grasping-sandbox"
