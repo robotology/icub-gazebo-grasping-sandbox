@@ -12,9 +12,8 @@ RUN apt update
 
 # Install essentials
 RUN apt install -y apt-utils software-properties-common apt-transport-https sudo \
-    psmisc lsb-release tmux nano wget curl telnet gnupg build-essential gdb git gitk \
-    cmake cmake-curses-gui libedit-dev libxml2-dev autoconf locales gdebi terminator meld \
-    dos2unix bash-completion meshlab
+    psmisc tmux nano wget curl telnet gnupg gdb git gitk autoconf locales gdebi \
+    terminator meld dos2unix meshlab
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
@@ -37,19 +36,7 @@ RUN apt install -y magic-wormhole
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
     git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
     echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&resize=scale&quality=9\"></head></html>" > /opt/novnc/index.html
-
-# Install dependencies
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
-    wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
-    apt update && \
-    apt install -y libeigen3-dev build-essential cmake cmake-curses-gui coinor-libipopt-dev freeglut3-dev \
-    libboost-system-dev libboost-filesystem-dev libboost-thread-dev libtinyxml-dev libace-dev libedit-dev \
-    libgsl0-dev libopencv-dev libode-dev liblua5.1-dev lua5.1 git swig qtbase5-dev qtdeclarative5-dev \
-    qtmultimedia5-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia \
-    qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
-    qml-module-qt-labs-settings libsdl1.2-dev libxml2-dev libv4l-dev libcgal-dev \
-    gazebo11 libgazebo11-dev
-    
+   
 # Select options
 ARG ROBOTOLOGY_SUPERBUILD_RELEASE
 ARG BUILD_TYPE
@@ -58,6 +45,15 @@ ARG ROBOTOLOGY_SUPERBUILD_INSTALL_DIR=/usr/local
 # Set up git (required by superbuild)
 RUN git config --global user.name "GitHub Actions" && \
     git config --global user.email "actions@github.com"
+    
+# Install dependencies
+RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 --branch ${ROBOTOLOGY_SUPERBUILD_RELEASE} && \
+    sudo robotology-superbuild/scripts/install_apt_dependencies.sh
+    
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
+    wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
+    apt update && \
+    apt install -y libcgal-dev gazebo11 libgazebo11-dev
 
 # Install VTK
 RUN git clone https://github.com/Kitware/VTK.git --depth 1 --branch v9.0.1 && \
@@ -69,8 +65,7 @@ RUN git clone https://github.com/Kitware/VTK.git --depth 1 --branch v9.0.1 && \
     cd ../.. && rm -Rf VTK
 
 # Build robotology-superbuild
-RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 --branch ${ROBOTOLOGY_SUPERBUILD_RELEASE} && \
-    cd robotology-superbuild && mkdir build && cd build && \
+RUN cd robotology-superbuild && mkdir build && cd build && \
     cmake .. \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           -DYCM_EP_INSTALL_DIR=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} \
