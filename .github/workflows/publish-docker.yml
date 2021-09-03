@@ -30,7 +30,7 @@ jobs:
       uses: elgohr/Publish-Docker-Github-Action@main
       env:
         ROBOTOLOGY_SUPERBUILD_RELEASE: ${{ github.event.inputs.superbuild_release }}
-        BUILD_TYPE:  ${{ github.event.inputs.build_type }}
+        BUILD_TYPE: ${{ github.event.inputs.build_type }}
       with:
         name: robotology/icub-gazebo-grasping-sandbox
         username: ${{ github.actor }}
