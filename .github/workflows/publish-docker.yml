@@ -6,7 +6,7 @@ on:
       superbuild_release:
         description: 'Robotology Superbuild Release'
         required: true
-        default: 'v0000.00'
+        default: 'master'
       add_tag_latest:
         description: 'Add tag latest to the docker image'
         required: true
