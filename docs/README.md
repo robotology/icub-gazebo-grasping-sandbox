@@ -82,10 +82,10 @@ To find out more on how **candidates ranking** takes place, please refer to the 
 ## Outro
 Enjoy this sandbox as a playground to exercise with iCub's manipulation tasks in Gazebo 🤖
 
-Also, don't hesitate to [**create a copy of the sandbox**][7] in your account to build on top new interesting methods 🧪
+🧪 Also, don't hesitate to [**create a copy of the sandbox**][7] in your account to build on top new interesting methods.
 Take a look at this bunch of [**ideas** 💡][8] to start with.
 
-Don't forget to let us know about your progress 📢
+📢 Don't forget to let us know about your progress.
 This is the 📃 [**list of works**][9] ✨ that we know were built on the sandbox.
 
 For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
