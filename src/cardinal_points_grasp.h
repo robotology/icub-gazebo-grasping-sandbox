@@ -171,11 +171,11 @@ public:
         // increase reaching accuracy
         yarp::os::Bottle options;
         auto& opt1 = options.addList();
-        opt1.addString("max_iter"); opt1.addInt(1000);
+        opt1.addString("max_iter"); opt1.addInt32(1000);
         auto& opt2 = options.addList();
-        opt2.addString("tol"); opt1.addDouble(.0001);
+        opt2.addString("tol"); opt1.addFloat64(.0001);
         auto& opt3 = options.addList();
-        opt3.addString("constr_tol"); opt2.addDouble(.000001);
+        opt3.addString("constr_tol"); opt2.addFloat64(.000001);
         iarm->tweakSet(options);
         yarp::sig::Vector dof;
         iarm->getDOF(dof);
@@ -183,13 +183,13 @@ public:
         iarm->setDOF(dof, dof);
 
         // retrieve SQ parameters
-        const auto x = sq_params.get(0).asDouble();
-        const auto y = sq_params.get(1).asDouble();
-        const auto z = sq_params.get(2).asDouble();
-        const auto angle = sq_params.get(3).asDouble() * (M_PI / 180.);
-        const auto bx = sq_params.get(4).asDouble();
-        const auto by = sq_params.get(5).asDouble();
-        const auto bz = sq_params.get(6).asDouble();
+        const auto x = sq_params.get(0).asFloat64();
+        const auto y = sq_params.get(1).asFloat64();
+        const auto z = sq_params.get(2).asFloat64();
+        const auto angle = sq_params.get(3).asFloat64() * (M_PI / 180.);
+        const auto bx = sq_params.get(4).asFloat64();
+        const auto by = sq_params.get(5).asFloat64();
+        const auto bz = sq_params.get(6).asFloat64();
         const auto max_b = std::max(bx, std::max(by, bz));
 
         const yarp::sig::Vector center{x, y, z};

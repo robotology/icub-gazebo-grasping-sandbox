@@ -29,9 +29,9 @@ class ModelMover : public gazebo::ModelPlugin
     void onWorldFrame() {
         if (auto* b = port.read(false)) {
             if (b->size() >= 3) { 
-                const auto x = b->get(0).asDouble();
-                const auto y = b->get(1).asDouble();
-                const auto ang = b->get(2).asDouble() / 2.;
+                const auto x = b->get(0).asFloat64();
+                const auto y = b->get(1).asFloat64();
+                const auto ang = b->get(2).asFloat64() / 2.;
                 const auto& cur_pose = model->WorldPose();
                 const auto q = cur_pose.Rot() * ignition::math::Quaterniond(std::cos(ang), 0., 0., std::sin(ang));
                 ignition::math::Pose3d new_pose(x, y, cur_pose.Pos()[2], q.W(), q.X(), q.Y(), q.Z());

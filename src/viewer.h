@@ -244,15 +244,15 @@ public:
         //       but VTK shares axes x and z (ThetaRoundness).
         //       To get a good display, directions of axes y and z need to be swapped
         //       => parameters for y and z are inverted and a rotation of -90 degrees around x is added
-        const auto x = sqParams.get(0).asDouble();
-        const auto y = sqParams.get(1).asDouble();
-        const auto z = sqParams.get(2).asDouble();
-        const auto angle = sqParams.get(3).asDouble();
-        const auto bx = sqParams.get(4).asDouble();
-        const auto by = sqParams.get(6).asDouble();
-        const auto bz = sqParams.get(5).asDouble();
-        const auto eps_1 = sqParams.get(7).asDouble();
-        const auto eps_2 = sqParams.get(8).asDouble();
+        const auto x = sqParams.get(0).asFloat64();
+        const auto y = sqParams.get(1).asFloat64();
+        const auto z = sqParams.get(2).asFloat64();
+        const auto angle = sqParams.get(3).asFloat64();
+        const auto bx = sqParams.get(4).asFloat64();
+        const auto by = sqParams.get(6).asFloat64();
+        const auto bz = sqParams.get(5).asFloat64();
+        const auto eps_1 = sqParams.get(7).asFloat64();
+        const auto eps_2 = sqParams.get(8).asFloat64();
 
         vtk_superquadric = vtkSmartPointer<vtkSuperquadric>::New();
         vtk_superquadric->ToroidalOff();
@@ -315,13 +315,13 @@ public:
             return false;
         }
 
-        const auto x = sqParams.get(0).asDouble();
-        const auto y = sqParams.get(1).asDouble();
-        const auto z = sqParams.get(2).asDouble();
-        const auto angle = sqParams.get(3).asDouble() * (M_PI / 180.);
-        const auto bx = sqParams.get(4).asDouble();
-        const auto by = sqParams.get(5).asDouble();
-        const auto bz = sqParams.get(6).asDouble();
+        const auto x = sqParams.get(0).asFloat64();
+        const auto y = sqParams.get(1).asFloat64();
+        const auto z = sqParams.get(2).asFloat64();
+        const auto angle = sqParams.get(3).asFloat64() * (M_PI / 180.);
+        const auto bx = sqParams.get(4).asFloat64();
+        const auto by = sqParams.get(5).asFloat64();
+        const auto bz = sqParams.get(6).asFloat64();
 
         const yarp::sig::Vector sqCenter{x, y, z};
         std::vector<yarp::sig::Vector> sqPoints{{bx, 0., 0., 1.}, {0., -by, 0., 1.},

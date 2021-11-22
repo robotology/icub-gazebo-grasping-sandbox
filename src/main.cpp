@@ -269,9 +269,9 @@ class GrasperModule : public RFModule, public rpc_IDL {
             Bottle delta_pose;
             auto r = dist_r(mersenne_engine);
             auto ang = dist_ang(mersenne_engine) * (M_PI / 180.);
-            delta_pose.addDouble(-.35 + r * cos(ang));
-            delta_pose.addDouble(r * sin(ang));
-            delta_pose.addDouble(dist_rot(mersenne_engine) * (M_PI / 180.));
+            delta_pose.addFloat64(-.35 + r * cos(ang));
+            delta_pose.addFloat64(r * sin(ang));
+            delta_pose.addFloat64(dist_rot(mersenne_engine) * (M_PI / 180.));
             port->prepare() = delta_pose;
             port->writeStrict();
 
@@ -337,7 +337,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         // get camera intrinsics
         Bottle info;
         igaze->getInfo(info);
-        const auto fov_h = info.find("camera_intrinsics_left").asList()->get(0).asDouble();
+        const auto fov_h = info.find("camera_intrinsics_left").asList()->get(0).asFloat64();
         const auto view_angle = 2. * std::atan((w / 2.) / fov_h) * (180. / M_PI);
 
         // aggregate image data in the point cloud of the whole scene
@@ -431,9 +431,9 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         viewer->focusOnSuperquadric();
 
-        const Vector sqCenter{sqParams.get(0).asDouble(),
-                              sqParams.get(1).asDouble(),
-                              sqParams.get(2).asDouble()};
+        const Vector sqCenter{sqParams.get(0).asFloat64(),
+                              sqParams.get(1).asFloat64(),
+                              sqParams.get(2).asFloat64()};
 
         // keep gazing at the object
         IGazeControl* igaze;
