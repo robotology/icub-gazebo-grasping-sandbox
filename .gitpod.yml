@@ -1,4 +1,4 @@
-image: ghcr.io/robotology/icub-gazebo-grasping-sandbox:v2021.05
+image: ghcr.io/robotology/icub-gazebo-grasping-sandbox
 ports:
 - port: 6080
   onOpen: notify
