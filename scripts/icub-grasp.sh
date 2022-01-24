@@ -1,5 +1,12 @@
 #!/bin/bash
 
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istitito Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # launch the demo
 run() {
     yarpserver --write --silent &
