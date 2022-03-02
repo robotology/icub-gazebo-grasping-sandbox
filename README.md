@@ -2,7 +2,7 @@
 Sandbox to Simulate Grasping in Gazebo with the iCub
 ====================================================
 
-[![DOI](https://zenodo.org/badge/283310078.svg)](https://zenodo.org/badge/latestdoi/283310078)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6322615.svg)](https://zenodo.org/record/6322615)
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Community](https://img.shields.io/badge/Join-Robotology_Community-blue?style=plastic&logo=github)](https://github.com/robotology/community)
 

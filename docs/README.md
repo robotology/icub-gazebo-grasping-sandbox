@@ -90,7 +90,7 @@ This is the 📃 [**list of works**][9] ✨ that we know were built on the sandb
 
 For your convenience, the latest release of the sandbox codebase can be referenced using this DOI:
 
-[![DOI](https://zenodo.org/badge/283310078.svg)](https://zenodo.org/badge/latestdoi/283310078)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6322615.svg)](https://zenodo.org/record/6322615)
 
 ## References
 - P. D. H. Nguyen, F. Bottarel, U. Pattacini, M. Hoffmann, L. Natale and G. Metta, "_Merging Physical and Social Interaction for Effective Human-Robot Collaboration_," 2018 IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids), Beijing, China, 2018, pp. 1-9, doi: [10.1109/HUMANOIDS.2018.8625030][2].
