@@ -11,7 +11,7 @@ on:
         type: boolean
         description: 'Add tag latest to the docker image'
         required: true
-        default: 'true'
+        default: true
       build_type:
         type: choice
         description: 'Build Type'
@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@main
     - name: Require tag latest
       id: add_tag_latest
-      if: ${{ inputs.add_tag_latest == 'true' }}
+      if: ${{ inputs.add_tag_latest }}
       run: |
         echo "::set-output name=tag::, latest"
     - name: Publish to Registry
