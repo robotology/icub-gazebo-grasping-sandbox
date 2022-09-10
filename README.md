@@ -23,7 +23,7 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
     cd /workspace/icub-gazebo-grasping-sandbox 
     mkdir build && cd build
     cmake ../
-    sudo make install
+    make install
     ```
 1. From within Gitpod, open up the browser at the port `6080` to get to the workspace desktop GUI.
 1. In the desktop GUI, open a terminal and run the grasping experiment:
