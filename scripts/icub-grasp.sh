@@ -10,7 +10,7 @@
 # launch the demo
 run() {
     yarpserver --write --silent &
-    yarpmanager-console --application /usr/local/share/ICUBcontrib/applications/icub-grasp.xml --run --connect --exit --silent
+    yarpmanager-console --application ${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}/share/ICUBcontrib/applications/icub-grasp.xml --run --connect --exit --silent
     
     yarp wait /icub-grasp/rpc
     echo "go" | yarp rpc /icub-grasp/rpc
