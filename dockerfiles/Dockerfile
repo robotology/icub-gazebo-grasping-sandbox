@@ -91,8 +91,6 @@ RUN git config --global --unset-all user.name && \
 
 # Set environmental variables
 ENV DISPLAY=:1
-ENV ROBOTOLOGY_SUPERBUILD_INSTALL_DIR=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}
-ENV CMAKE_PREFIX_PATH=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}
 
 # Create user gitpod
 RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod && \
