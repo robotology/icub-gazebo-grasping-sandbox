@@ -109,7 +109,7 @@ RUN echo "GIT_PROMPT_ONLY_IN_REPO=1" >> ~/.bashrc && \
     echo "source \${HOME}/.bash-git-prompt/gitprompt.sh" >> ~/.bashrc && \
     echo "YARP_COLORED_OUTPUT=1" >> ~/.bashrc && \
     echo "source ${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}/share/robotology-superbuild/setup.sh" >> ~/.bashrc && \
-    echo "LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}" >>  ~/.bashrc
+    echo "LD_LIBRARY_PATH=/usr/local/lib:\${LD_LIBRARY_PATH}" >>  ~/.bashrc
 
 # Create the Desktop dir
 RUN mkdir -p /home/gitpod/Desktop
