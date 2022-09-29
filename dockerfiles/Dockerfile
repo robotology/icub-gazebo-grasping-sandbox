@@ -37,7 +37,7 @@ RUN apt install -y magic-wormhole
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
     git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
     echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&resize=scale&quality=9\"></head></html>" > /opt/novnc/index.html
-   
+
 # Select options
 ARG ROBOTOLOGY_SUPERBUILD_RELEASE
 ARG BUILD_TYPE
@@ -54,16 +54,7 @@ RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
     wget https://packages.osrfoundation.org/gazebo.key -O - | tee /etc/apt/trusted.gpg.d/gazebo.asc && \
     apt update && \
-    apt install -y libcgal-dev gazebo libgazebo-dev
-
-# Install VTK
-RUN git clone https://github.com/Kitware/VTK.git --depth 1 --branch v9.1.0 && \
-    cd VTK && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-    -DBUILD_TESTING=OFF && \
-    make install && \
-    cd ../.. && rm -Rf VTK
+    apt install -y  libpcl-dev libcgal-dev gazebo libgazebo-dev
 
 # Build robotology-superbuild
 RUN cd robotology-superbuild && mkdir build && cd build && \
@@ -71,19 +62,11 @@ RUN cd robotology-superbuild && mkdir build && cd build && \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           -DYCM_EP_INSTALL_DIR=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} \
           -DROBOTOLOGY_ENABLE_CORE:BOOL=ON \
-          -DROBOTOLOGY_USES_GAZEBO:BOOL=ON && \
+          -DROBOTOLOGY_ENABLE_GRASPING:BOOL=ON \
+          -DROBOTOLOGY_USES_GAZEBO:BOOL=ON \
+          -DROBOTOLOGY_USES_PCL_AND_VTK:BOOL=ON && \
     make && \
     cd ../.. && rm -Rf robotology-superbuild
-
-# Build find-superquadric
-RUN git clone https://github.com/robotology/find-superquadric.git --depth 1 && \
-    cd find-superquadric && mkdir build && cd build && \
-    cmake .. \
-    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-    -DCMAKE_PREFIX_PATH=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} \
-    -DCMAKE_INSTALL_PREFIX=${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} && \
-    make install && \
-    cd ../.. && rm -Rf find-superquadric
 
 # Clean up git configuration
 RUN git config --global --unset-all user.name && \
