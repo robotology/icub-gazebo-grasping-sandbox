@@ -38,7 +38,7 @@ RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
     git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
     echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&resize=scale&quality=9\"></head></html>" > /opt/novnc/index.html
 
-# Install PCL and VTK
+# Install PCL and VTK (a dependency for PCL)
 RUN apt install -y libpcl-dev
 
 # Select options
