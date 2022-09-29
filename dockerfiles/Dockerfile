@@ -38,9 +38,6 @@ RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
     git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
     echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=1000&resize=scale&quality=9\"></head></html>" > /opt/novnc/index.html
 
-# Install PCL and VTK (a dependency for PCL)
-RUN apt install -y libpcl-dev
-
 # Select options
 ARG ROBOTOLOGY_SUPERBUILD_RELEASE
 ARG BUILD_TYPE
@@ -57,7 +54,7 @@ RUN git clone https://github.com/robotology/robotology-superbuild.git --depth 1 
 RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list' && \
     wget https://packages.osrfoundation.org/gazebo.key -O - | tee /etc/apt/trusted.gpg.d/gazebo.asc && \
     apt update && \
-    apt install -y libcgal-dev gazebo libgazebo-dev
+    apt install -y  libpcl-dev libcgal-dev gazebo libgazebo-dev
 
 # Build robotology-superbuild
 RUN cd robotology-superbuild && mkdir build && cd build && \
