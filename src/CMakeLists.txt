@@ -8,6 +8,7 @@
 find_package(YARP REQUIRED COMPONENTS os dev sig math)
 find_package(ICUB REQUIRED COMPONENTS iKin)
 
+# Gte around conflicts between VTK and Gazebo in Ubuntu 2022.04
 set(CMAKE_MODULE_PATH_BAK ${CMAKE_MODULE_PATH})
 find_package(Gazebo REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_BAK})
