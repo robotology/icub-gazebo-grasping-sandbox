@@ -30,7 +30,7 @@ jobs:
       id: add_tag_latest
       if: ${{ inputs.add_tag_latest }}
       run: |
-        echo "::set-output name=tag::, latest"
+        echo "tag=, latest" >> $GITHUB_OUTPUT
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@main
       env:
