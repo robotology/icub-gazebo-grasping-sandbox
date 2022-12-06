@@ -19,12 +19,17 @@ RUN apt install -y apt-utils software-properties-common apt-transport-https sudo
 RUN locale-gen en_US.UTF-8
 
 # Install graphics
-RUN apt install -y xfce4 xfce4-goodies xserver-xorg-video-dummy xserver-xorg-legacy x11vnc firefox && \
+RUN apt install -y xfce4 xfce4-goodies xserver-xorg-video-dummy xserver-xorg-legacy x11vnc && \
     apt remove -y xfce4-power-manager xfce4-screensaver light-locker && \
     apt autoremove -y && \
     sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
 COPY xorg.conf /etc/X11/xorg.conf
 RUN dos2unix /etc/X11/xorg.conf
+
+# Install browser
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    gdebi -n google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
 
 # Install python
 RUN apt install -y python3 python3-dev python3-pip python3-setuptools && \
