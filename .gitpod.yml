@@ -1,4 +1,13 @@
 image: ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest
+github:
+  prebuilds:
+    master: false
+    branches: false
+    pullRequests: false
+    pullRequestsFromForks: false
+    addCheck: false
+    addComment: false
+    addBadge: false
 ports:
 - port: 6080
   onOpen: notify
