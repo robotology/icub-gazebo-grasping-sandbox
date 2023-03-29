@@ -32,7 +32,7 @@ jobs:
       run: |
         echo "tag=, latest" >> $GITHUB_OUTPUT
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@main
+      uses: elgohr/Publish-Docker-Github-Action@v5
       env:
         ROBOTOLOGY_SUPERBUILD_RELEASE: ${{ inputs.superbuild_release }}
         BUILD_TYPE: ${{ inputs.build_type }}
