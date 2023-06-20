@@ -205,7 +205,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
             for (auto poly:polys) {
                 ICartesianControl* iarm;
                 poly->view(iarm);
-                iarm->setTrajTime(.6);
+                iarm->setTrajTime(2.);
             }
         }
 
