@@ -136,7 +136,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         }
 
         // wait only for the last arm
-        iarm->waitMotionDone(.1, 3.);
+        iarm->waitMotionDone(.1, 5.);
         return true;
     }
 
@@ -502,7 +502,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
         iarm->stopControl();
         iarm->restoreContext(context);
         iarm->setInTargetTol(.001);
-        iarm->setTrajTime(1.);
 
         // put the hand in the pre-grasp configuration
         ihand->setRefAccelerations(fingers.size(), fingers.data(), vector<double>(fingers.size(), numeric_limits<double>::infinity()).data());
@@ -516,12 +515,12 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         // reach for the pre-grasp pose
         const auto dir = x - sqCenter;
-        iarm->goToPoseSync(x + .05 * dir / norm(dir), o);
-        iarm->waitMotionDone(.1, 3.);
+        iarm->goToPoseSync(x + .06 * dir / norm(dir), o);
+        iarm->waitMotionDone(.1, 5.);
         
         // reach for the object
         iarm->goToPoseSync(x, o);
-        iarm->waitMotionDone(.1, 3.);
+        iarm->waitMotionDone(.1, 5.);
 
         // close fingers
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>{60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}.data());
@@ -533,7 +532,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto lift = x + Vector{0., 0., .1};
         igaze->lookAtFixationPoint(lift);
         iarm->goToPoseSync(lift, o);
-        iarm->waitMotionDone(.1, 3.);
+        iarm->waitMotionDone(.1, 5.);
 
         lookAtDeveloper();
         return true;
