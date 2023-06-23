@@ -42,7 +42,8 @@ service rpc_IDL
 
    /**
    * Go the whole hog.
+   * @param random_pose iff "on" it performs object's pose randomization
    * @return true/false on success/failure.
    */
-   bool go();
+   bool go(1:string random_pose);
 }

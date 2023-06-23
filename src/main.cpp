@@ -15,6 +15,8 @@
 #include <random>
 #include <fstream>
 
+#include <glog/logging.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
@@ -42,6 +44,7 @@
 #include "cardinal_points_grasp.h"
 
 using namespace std;
+using namespace google;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -238,14 +241,17 @@ class GrasperModule : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
-    bool go() override {
-        if (randomize()) {
-            if (home()) {
-                if (segment()) {
-                    if (fit()) {
-                        if (grasp()) {
-                            return true;
-                        }
+    bool go(const string& random_pose) override {
+        if (random_pose == "on") {
+            if (!randomize()) {
+                return false;
+            }
+        }
+        if (home()) {
+            if (segment()) {
+                if (fit()) {
+                    if (grasp()) {
+                        return true;
                     }
                 }
             }
@@ -367,7 +373,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
             }
         }
 
-        //savePCL("/workspace/pc_scene.off", pc_scene);
+        savePCL("/workspace/pc_scene.off", pc_scene);
 
         // segment out the table and the object
         pc_table = make_shared<yarp::sig::PointCloud<DataXYZRGBA>>();
@@ -378,8 +384,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
             return false;
         }
 
-        //savePCL("/workspace/pc_table.off", pc_table);
-        //savePCL("/workspace/pc_object.off", pc_object);
+        savePCL("/workspace/pc_table.off", pc_table);
+        savePCL("/workspace/pc_object.off", pc_object);
 
         // update viewer
         Vector cam_foc;
@@ -406,6 +412,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
                     const auto ret = sqPort.write(*pc_object, sqParams);
                     if (ret) {
                         viewer->addSuperquadric(sqParams);
+                        LOG(INFO) << "Superquadric parameters: " << sqParams.toString();                   
                         return true;
                     } else {
                         yError() << "Unable to fit the object!";
@@ -434,6 +441,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const Vector sqCenter{sqParams.get(0).asFloat64(),
                               sqParams.get(1).asFloat64(),
                               sqParams.get(2).asFloat64()};
+
+        LOG(INFO) << "Superquadric center: " << sqCenter.toString(3, 3);
 
         // keep gazing at the object
         IGazeControl* igaze;
@@ -478,7 +487,7 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         viewer->showCandidates(candidates);
 
-        // select arm corresponing to the best candidate
+        // select arm corresponding to the best candidate
         shared_ptr<CardinalPointsGrasp> grasper;
         IPositionControl* ihand;
         int context;
@@ -493,10 +502,14 @@ class GrasperModule : public RFModule, public rpc_IDL {
              arm_l.view(iarm);
              context = candidates_l.second;
         }
+        LOG(INFO) << "Selected arm: \"" << type << "\"";
 
         // target pose that allows grasping the object
         const auto x = T.getCol(3).subVector(0, 2);
         const auto o = dcm2axis(T);
+
+        LOG(INFO) << "Best grasp position: " << x.toString(3, 3);
+        LOG(INFO) << "Best grasp orientation: " << o.toString(3, 3);
 
         // enable the context used by the algorithm
         iarm->stopControl();
@@ -515,12 +528,26 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
         // reach for the pre-grasp pose
         const auto dir = x - sqCenter;
-        iarm->goToPoseSync(x + .06 * dir / norm(dir), o);
+        const auto pre_x = x + .06 * dir / norm(dir);
+        LOG(INFO) << "Pre-grasp position: " << pre_x.toString(3, 3);
+        iarm->goToPoseSync(pre_x, o);
         iarm->waitMotionDone(.1, 5.);
+        {
+            Vector _x, _o;
+            iarm->getPose(_x, _o);
+            LOG(INFO) << "Reached pre-grasp position: " << _x.toString(3, 3) << "; error = " << norm(pre_x - _x);
+            LOG(INFO) << "Reached pre-grasp orientation: " << _o.toString(3, 3);
+        }
         
         // reach for the object
         iarm->goToPoseSync(x, o);
         iarm->waitMotionDone(.1, 5.);
+        {
+            Vector _x, _o;
+            iarm->getPose(_x, _o);
+            LOG(INFO) << "Reached grasp position: " << _x.toString(3, 3) << "; error = " << norm(x - _x);
+            LOG(INFO) << "Reached grasp orientation: " << _o.toString(3, 3);
+        }
 
         // close fingers
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>{60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}.data());
@@ -592,6 +619,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
 
 /******************************************************************************/
 int main(int argc, char *argv[]) {
+    InitGoogleLogging(argv[0]);
+
     Network yarp;
     if (!yarp.checkNetwork()) {
         yError() << "Unable to find YARP server!";

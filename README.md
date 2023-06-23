@@ -27,6 +27,11 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
    ```console
    icub-grasp.sh
    ```
+1. You can run a systematic test with always the same object in the same pose by specifying the option `test`:
+   ```console
+   icub-grasp.sh test
+   ```
+   Afterward, inspect useful info logged in `/tmp/icub-gazebo-grasping-sandbox.INFO`.
 1. If needed, you can clean up hanging resources by specifying the option `clean`:
    ```console
    icub-grasp.sh clean
