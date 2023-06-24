@@ -241,6 +241,15 @@ class GrasperModule : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
+    auto angle(const Vector& o1, const Vector& o2) const {
+        auto R1 = axis2dcm(o1);
+        auto R2 = axis2dcm(o2);
+        auto Re = R1 * R2.transposed();
+
+        return (180./M_PI) * acos((Re(1, 1) + Re(2, 2) + Re(3, 3) - 1.) / 2.);
+    }
+
+    /**************************************************************************/
     bool go(const string& random_pose) override {
         if (random_pose == "on") {
             if (!randomize()) {
@@ -535,8 +544,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         {
             Vector _x, _o;
             iarm->getPose(_x, _o);
-            LOG(INFO) << "Reached pre-grasp position: " << _x.toString(3, 3) << "; error = " << norm(pre_x - _x);
-            LOG(INFO) << "Reached pre-grasp orientation: " << _o.toString(3, 3);
+            LOG(INFO) << "Reached pre-grasp position: " << _x.toString(3, 3) << "; error (m) = " << norm(pre_x - _x);
+            LOG(INFO) << "Reached pre-grasp orientation: " << _o.toString(3, 3) << "; error (deg) = " << angle(o, _o);
         }
         
         // reach for the object
@@ -545,8 +554,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         {
             Vector _x, _o;
             iarm->getPose(_x, _o);
-            LOG(INFO) << "Reached grasp position: " << _x.toString(3, 3) << "; error = " << norm(x - _x);
-            LOG(INFO) << "Reached grasp orientation: " << _o.toString(3, 3);
+            LOG(INFO) << "Reached grasp position: " << _x.toString(3, 3) << "; error (m) = " << norm(x - _x);
+            LOG(INFO) << "Reached grasp orientation: " << _o.toString(3, 3) << "; error (deg) = " << angle(o, _o);
         }
 
         // close fingers
