@@ -38,6 +38,9 @@ RUN apt install -y python3 python3-dev python3-pip python3-setuptools && \
 # Install magic-wormwhole to get things from one computer to another safely
 RUN apt install -y magic-wormhole
 
+# Install glog
+RUN apt install -y libgoogle-glog-dev
+
 # Install noVNC
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc && \
     git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify && \
