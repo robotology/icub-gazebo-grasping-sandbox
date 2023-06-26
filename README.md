@@ -43,8 +43,6 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
 
 ## [🔽 Instructions to run the sandbox locally](./dockerfiles/README.md)
 
-## [🏬 Instructions to run the sandbox on the Robot Bazaar](https://robot-bazaar.iit.it/applications/14)
-
 ## ℹ Manual installation
 If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
 
