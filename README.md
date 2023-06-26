@@ -31,7 +31,7 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
    ```console
    icub-grasp.sh test
    ```
-   Afterward, inspect useful info logged in `/tmp/icub-gazebo-grasping-sandbox.INFO`.
+   Afterward, inspect relevant quantities logged in `/tmp/icub-gazebo-grasping-sandbox.INFO`.
 1. If needed, you can clean up hanging resources by specifying the option `clean`:
    ```console
    icub-grasp.sh clean
