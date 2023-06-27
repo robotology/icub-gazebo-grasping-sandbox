@@ -622,6 +622,8 @@ class GrasperModule : public RFModule, public rpc_IDL {
         arm_l.close();
         hand_r.close();
         hand_l.close();
+
+        FlushLogFiles(INFO);
         return true;
     }
 };
