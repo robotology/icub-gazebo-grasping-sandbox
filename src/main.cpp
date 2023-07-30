@@ -144,6 +144,28 @@ class GrasperModule : public RFModule, public rpc_IDL {
     }
 
     /**************************************************************************/
+    auto angle(const Vector& o1, const Vector& o2) const {
+        auto R1 = axis2dcm(o1);
+        auto R2 = axis2dcm(o2);
+        auto Re = R1 * R2.transposed();
+
+        return (180./M_PI) * acos((Re(1, 1) + Re(2, 2) + Re(3, 3) - 1.) / 2.);
+    }
+
+    /**************************************************************************/
+    bool reach(ICartesianControl* iarm, const Vector& x, const Vector& o,
+               const string& pose_tag) {
+        iarm->goToPoseSync(x, o);
+        iarm->waitMotionDone(.1, 5.);
+
+        Vector _x, _o;
+        iarm->getPose(_x, _o);
+        LOG(INFO) << "Reached " << pose_tag << " position: " << _x.toString(3, 3) << "; error (m) = " << norm(x - _x);
+        LOG(INFO) << "Reached " << pose_tag << " orientation: " << _o.toString(3, 3) << "; error (deg) = " << angle(o, _o);
+        return true;
+    }
+
+    /**************************************************************************/
     bool configure(ResourceFinder& rf) override {
         const string name = "icub-grasp";
 
@@ -238,15 +260,6 @@ class GrasperModule : public RFModule, public rpc_IDL {
         viewer->start();
 
         return true;
-    }
-
-    /**************************************************************************/
-    auto angle(const Vector& o1, const Vector& o2) const {
-        auto R1 = axis2dcm(o1);
-        auto R2 = axis2dcm(o2);
-        auto Re = R1 * R2.transposed();
-
-        return (180./M_PI) * acos((Re(1, 1) + Re(2, 2) + Re(3, 3) - 1.) / 2.);
     }
 
     /**************************************************************************/
@@ -539,24 +552,10 @@ class GrasperModule : public RFModule, public rpc_IDL {
         const auto dir = x - sqCenter;
         const auto pre_x = x + .06 * dir / norm(dir);
         LOG(INFO) << "Pre-grasp position: " << pre_x.toString(3, 3);
-        iarm->goToPoseSync(pre_x, o);
-        iarm->waitMotionDone(.1, 5.);
-        {
-            Vector _x, _o;
-            iarm->getPose(_x, _o);
-            LOG(INFO) << "Reached pre-grasp position: " << _x.toString(3, 3) << "; error (m) = " << norm(pre_x - _x);
-            LOG(INFO) << "Reached pre-grasp orientation: " << _o.toString(3, 3) << "; error (deg) = " << angle(o, _o);
-        }
-        
+        reach(iarm, pre_x, o, "pre-grasp");
+
         // reach for the object
-        iarm->goToPoseSync(x, o);
-        iarm->waitMotionDone(.1, 5.);
-        {
-            Vector _x, _o;
-            iarm->getPose(_x, _o);
-            LOG(INFO) << "Reached grasp position: " << _x.toString(3, 3) << "; error (m) = " << norm(x - _x);
-            LOG(INFO) << "Reached grasp orientation: " << _o.toString(3, 3) << "; error (deg) = " << angle(o, _o);
-        }
+        reach(iarm, x, o, "grasp");
 
         // close fingers
         ihand->positionMove(fingers.size(), fingers.data(), vector<double>{60., 80., 40., 35., 40., 35., 40., 35., pinkie_max}.data());
