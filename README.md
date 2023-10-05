@@ -44,7 +44,7 @@ Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂�
 ## [🔽 Instructions to run the sandbox locally](./dockerfiles/README.md)
 
 ## ℹ Manual installation
-If you want to install the sandbox manually to perform specific customization (e.g. enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
+If you want to install the sandbox manually to perform specific customization (e.g., enable GPU), please refer to the recipe contained in the [**`Dockerfile`**](./dockerfiles/Dockerfile).
 
 ## 📚 Cite the sandbox
 In case you use this sandbox for your work, please **quote it within any resulting publication** by citing this [repository](./CITATION.cff) and/or the paper where you can find the **original implementation of the grasping method**:
