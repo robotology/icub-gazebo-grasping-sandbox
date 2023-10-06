@@ -173,9 +173,9 @@ public:
         auto& opt1 = options.addList();
         opt1.addString("max_iter"); opt1.addInt32(1000);
         auto& opt2 = options.addList();
-        opt2.addString("tol"); opt1.addFloat64(.0001);
+        opt2.addString("tol"); opt2.addFloat64(.0001);
         auto& opt3 = options.addList();
-        opt3.addString("constr_tol"); opt2.addFloat64(.000001);
+        opt3.addString("constr_tol"); opt3.addFloat64(.000001);
         iarm->tweakSet(options);
         yarp::sig::Vector dof;
         iarm->getDOF(dof);
