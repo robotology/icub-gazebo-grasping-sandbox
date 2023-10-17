@@ -114,7 +114,8 @@ RUN chmod +x /usr/bin/start-vnc-session.sh && \
     dos2unix /usr/bin/start-vnc-session.sh
 
 # Make sure specific dirs are owned by gitpod user
-RUN chown -R gitpod.gitpod ${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR} && \
+RUN chown -R gitpod.gitpod ${ROBOTOLOGY_SUPERBUILD_INSTALL_DIR}
+RUN mkdir /workspace && \
     chown -R gitpod.gitpod /workspace
 
 # Manage ports
