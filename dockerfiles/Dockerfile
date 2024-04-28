@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 LABEL org.opencontainers.image.title="iCub Gazebo Grasping Sandbox"
 LABEL org.opencontainers.image.description="Infrastructure for running grasping experiments with the iCub humanoid in Gazebo"
 LABEL org.opencontainers.image.source="https://github.com/robotology/icub-gazebo-grasping-sandbox"
