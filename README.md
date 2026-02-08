@@ -6,17 +6,15 @@ Sandbox to Simulate Grasping in Gazebo with the iCub
 [![ZenHub](https://img.shields.io/badge/Shipping_faster_with-ZenHub-435198.svg)](https://zenhub.com)
 [![Community](https://img.shields.io/badge/Join-Robotology_Community-blue?style=plastic&logo=github)](https://github.com/robotology/community)
 
-## [🚶🏻‍♂️ Walkthrough][1]
+## [🚶🏻‍♂️ Walkthrough][walkthrough]
 This sandbox allows you to experiment with iCub performing basic object grasping within the Gazebo simulator.
 
 ## ☁ Instructions to run the sandbox on the web
-We make use of the [Gitpod Cloud IDE](https://gitpod.io) as infrastructure. Find out more on [YARP-enabled Gitpod workspaces][2].
-
-Here's below a quick how-to guide; please, refer to the section [🚶🏻‍♂️ Walkthrough][1] for an extensive video tutorial 🎥
+Here's below a quick how-to guide. For a more detailed description of the grasping pipeline, please refer to the [**🚶🏻‍♂️ Walkthrough**][walkthrough].
 
 1. To get started with the sandbox, click on the following badge:
 
-    [![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][3]
+    [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/robotology/icub-gazebo-grasping-sandbox)
 
 1. Once the sandbox workspace is ready, build and install the project:
     ```console
@@ -63,7 +61,7 @@ In case you use this sandbox for your work, please **quote it within any resulti
 </ul>
 </details>
 
-## [📃 List of works built on the sandbox][4]
+## [📃 List of works built on the sandbox][list-works]
 
 ### 👨🏻‍💻 Maintainers
 This repository is maintained by:
@@ -73,16 +71,14 @@ This repository is maintained by:
 | [<img src="https://github.com/pattacini.png" width="40">](https://github.com/pattacini) | [@pattacini](https://github.com/pattacini) |
 
 ### 🙏 Acknowledgements
-- This sandbox was made possible thanks to [xEnVrE](https://github.com/xEnVrE) of the [HSP@IIT][5] group for his contributions to [`robotology/icub-models`][6] on simulating visuo-manipulation tasks in Gazebo.
-- Inspired by the simplified simulation environment available in [`shadow-robot/smart_grasping_sandbox`][7].
+- This sandbox was made possible thanks to [xEnVrE](https://github.com/xEnVrE) of the [HSP@IIT][HSP] group for his contributions to [`robotology/icub-models`][icub-models] on simulating visuo-manipulation tasks in Gazebo.
+- Inspired by the simplified simulation environment available in [`shadow-robot/smart_grasping_sandbox`][shadow-robot].
 
 ### 🆕 Contributing
 Check out our [CONTRIBUTING guidelines](./.github/CONTRIBUTING.md).
 
-[1]: https://robotology.github.io/icub-gazebo-grasping-sandbox
-[2]: https://github.com/robotology/community/discussions/459
-[3]: https://gitpod.io/from-referrer
-[4]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
-[5]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
-[6]: https://github.com/robotology/icub-models
-[7]: https://github.com/shadow-robot/smart_grasping_sandbox
+[walkthrough]: https://robotology.github.io/icub-gazebo-grasping-sandbox
+[list-works]: https://robotology.github.io/icub-gazebo-grasping-sandbox/building-on-sandbox.html
+[HSP]: https://www.iit.it/research/lines/humanoid-sensing-and-perception
+[icub-models]: https://github.com/robotology/icub-models
+[shadow-robot]: https://github.com/shadow-robot/smart_grasping_sandbox
