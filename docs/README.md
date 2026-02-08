@@ -1,12 +1,6 @@
 🚶🏻‍♂️ Walkthrough
 ==============
 
-## Video tutorial on how to run the sandbox in Gitpod
-
-| |
-| :---: |
-| <video controls width="720" height="405"> <source type="video/mp4" src="./assets/videos/gitpod.mp4#t=00:00:01"> </video> |
-
 ## Intro
 This sandbox aims to illustrate how iCub can perform grasping within the Gazebo simulation environment.
 

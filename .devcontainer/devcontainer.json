@@ -1,0 +1,24 @@
+{
+  "name": "iCub Gazebo Grasping Sandbox",
+  "image": "ghcr.io/robotology/icub-gazebo-grasping-sandbox:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:latest": { },
+    "ghcr.io/devcontainers/features/git-lfs:latest": { }
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "vnc",
+      "onAutoForward": "openBrowser"
+    }        
+  },
+  "remoteUser": "codespace",
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  },
+  "postAttachCommand": {
+    "vnc": "start-vnc-session.sh"
+  }
+}
