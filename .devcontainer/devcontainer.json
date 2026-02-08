@@ -9,7 +9,7 @@
   "portsAttributes": {
     "6080": {
       "label": "vnc",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "openPreview"
     }        
   },
   "remoteUser": "codespace",
