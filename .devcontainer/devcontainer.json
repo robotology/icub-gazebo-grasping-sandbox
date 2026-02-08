@@ -6,7 +6,8 @@
     "ghcr.io/devcontainers/features/git-lfs:latest": { }
   },
   "hostRequirements": {
-    "cpus": 4
+    "cpus": 4,
+    "memory": "8gb"
   },
   "forwardPorts": [6080],
   "portsAttributes": {
