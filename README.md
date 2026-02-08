@@ -16,7 +16,10 @@ Here's below a quick how-to guide. For a more detailed description of the graspi
 
     [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/robotology/icub-gazebo-grasping-sandbox)
 
-1. Once the sandbox workspace is ready, build and install the project:
+1. Once the sandbox workspace is ready, do the following:
+    1. Click on the **PORTS** tab.
+    2. Click on the browser icon 🌐 next to the nvc port `6080` to open the desktop view.
+1. Within the terminal, build and install the project:
     ```console
     cmake -S . -B build
     cmake --build build/ --target install
@@ -25,15 +28,18 @@ Here's below a quick how-to guide. For a more detailed description of the graspi
    ```console
    icub-grasp.sh
    ```
-1. You can run a systematic test with always the same object in the same pose by specifying the option `test`:
-   ```console
-   icub-grasp.sh test
-   ```
-   Afterward, inspect relevant quantities logged in `/tmp/icub-gazebo-grasping-sandbox.INFO`.
-1. If needed, you can clean up hanging resources by specifying the option `clean`:
-   ```console
-   icub-grasp.sh clean
-   ```
+   You will see the robot in action in the desktop view.
+
+Also:   
+- You can run a systematic test with always the same object in the same pose by specifying the option `test`:
+  ```console
+  icub-grasp.sh test
+  ```
+  Afterward, inspect relevant quantities logged in `/tmp/icub-gazebo-grasping-sandbox.INFO`.
+- If needed, you can clean up hanging resources by specifying the option `clean`:
+  ```console
+  icub-grasp.sh clean
+  ```
 
 <div align="center">
   <img src="./assets/showcase.gif">
