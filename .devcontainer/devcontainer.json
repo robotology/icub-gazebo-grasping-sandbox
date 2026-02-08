@@ -5,11 +5,15 @@
     "ghcr.io/devcontainers/features/github-cli:latest": { },
     "ghcr.io/devcontainers/features/git-lfs:latest": { }
   },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  },
   "forwardPorts": [6080],
   "portsAttributes": {
     "6080": {
       "label": "vnc",
-      "onAutoForward": "openPreview"
+      "onAutoForward": "openBrowserOnce"
     }        
   },
   "remoteUser": "codespace",
